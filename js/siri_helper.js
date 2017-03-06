@@ -1,5 +1,5 @@
 var NetConnector = function() {
-  this.profile = 'uat';
+  this.profile = 'uat_ip';
   this.recommendAnswer =  {
     "code": 0,
     "dt": 1486624881551,
