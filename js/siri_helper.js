@@ -110,6 +110,15 @@ var NetConnector = function() {
     }]
   };
 
+    this.answerStyle = {
+      'WAITING': 1,
+      'ASK_HINT': 2,
+      'PLAIN_TEXT': 3,
+      'STOCK_QUOTATION':4,
+      'HOT_STOCKS': 5,
+      'STOCK_HOT': 6,
+      'STOCK_FORECAST': 7
+    };
 }
 
 NetConnector.prototype = {
@@ -181,37 +190,37 @@ NetConnector.prototype = {
               break;
               case 'help':
               formated_contents.push({
-                type: 'help',
+                style: self.answerStyle.ASK_HINT,
                 data: content.data.body
               });
               break;
             case 'hot':
               formated_contents.push({
-                type: 'hot',
+                style: self.answerStyle.STOCK_HOT,
                 data: content.data.body
               })
               break;
             case 'forecast':
               formated_contents.push({
-                type: 'forecast',
+                style: self.answerStyle.STOCK_FORECAST,
                 data: content.data.body
               })
               break;
             case 'plain':
               formated_contents.push({
-                type: 'plain',
+                style: self.answerStyle.PLAIN_TEXT,
                 data: content.data.body
               });
               break;
             case 'quotation':
               formated_contents.push({
-                type: 'quotation',
+                style: self.answerStyle.STOCK_QUOTATION,
                 data: content.data.body
               });
               break;
             case 'optimization':
               formated_contents.push({
-                type: 'optimization',
+                style: self.answerStyle.HOT_STOCKS,
                 data: content.data.body
               });
               break;

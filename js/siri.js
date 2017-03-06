@@ -119,16 +119,8 @@
       // 'SIRI_ASK_HINT': 2,
       'CONVERSATION': 3,
     };
-    this.answerStyle = {
-      'WAITING': 1,
-      'ASK_HINT': 2,
-      'PLAIN_TEXT': 3,
-      'STOCK_QUOTATION':4,
-      'HOT_STOCKS': 5,
-      'STOCK_HOT': 6,
-      'STOCK_FORECAST': 7
-    }
     this.netConnector = new NetConnector();
+    this.answerStyle = this.netConnector.answerStyle;
   }
   BenewSIRI.prototype = {
     init: function() {
@@ -177,35 +169,6 @@
       //   }
       // });
     },
-    convertAnswerStyle: function(originStyle) {
-      var style = this.answerStyle.WAITING;
-      switch (originStyle) {
-        case 'help':
-          style = this.answerStyle.ASK_HINT;
-          break;
-        case 'waiting':
-          style = this.answerStyle.WAITING;
-          break;
-        case 'hot':
-          style = this.answerStyle.STOCK_HOT;
-          break;
-        case 'forecast':
-          style = this.answerStyle.STOCK_FORECAST;
-          break;
-        case 'plain':
-          style = this.answerStyle.PLAIN_TEXT;
-          break;
-        case 'quotation':
-          style = this.answerStyle.STOCK_QUOTATION;
-          break;
-        case 'optimization':
-          style = this.answerStyle.HOT_STOCKS;
-          break;
-        default:
-          style = this.answerStyle.ASK_HINT;
-      }
-      return style;
-    },
     askSIRI: function(question) {
       console.log(question);
       if (!question || question.length == 0) {
@@ -230,10 +193,8 @@
             }]
           }
           this.hideLoading(options);
+          // $.output(contents);
           contents.forEach(function(it) {
-            it.style = this.convertAnswerStyle(it.type);
-            // it.style = this.answerStyle.ASK_HINT;
-            // console.log(it);
             cardNode.append($(this.createAnswerDOM(it)));
             this.bottomDiv({
               cardName: this.cardName
@@ -248,6 +209,7 @@
     },
     createAnswerDOM: function(options) {
       var answerDom = '';
+      // console.log(options);
       switch (options.style) {
         case this.answerStyle.WAITING:
           answerDom = 
