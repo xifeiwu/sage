@@ -1,124 +1,14 @@
 var NetConnector = function() {
   this.profile = 'uat_ip';
-  this.recommendAnswer =  {
-    "code": 0,
-    "dt": 1486624881551,
-    "status": "success",
-    "content": [{
-      "type": "recommend",
-      "data": {
-        "body": [{
-          "studio": "你可以这样问",
-          "items": [
-            "600519",
-            "开户",
-            "选股",
-            "KDJ",
-            "茅台行情"
-          ]
-        }, {
-          "studio": "你可以这样问",
-          "items": [
-            "热议榜",
-            "洗盘",
-            "600519",
-            "茅台指标",
-            "茅台行情"
-          ]
-        }],
-        "predictLink": []
-      }
-    }]
+  this.answerStyle = {
+    'WAITING': 1,
+    'ASK_HINT': 2,
+    'PLAIN_TEXT': 3,
+    'STOCK_QUOTATION':4,
+    'HOT_STOCKS': 5,
+    'STOCK_HOT': 6,
+    'STOCK_FORECAST': 7
   };
-  this.quotationAnswer = {
-    "code": 0,
-    "dt": 1486624881551,
-    "status": "success",
-    "content": [
-      {
-        "type": "plain", //plain或者其他没有匹配的模板统一走这个
-        "data": {
-          "body": "该股票行情如下：",
-          "predictLink": []
-        }
-      }, 
-      {
-        "type": "quotation",
-        "data": {
-          "body": {
-            "tradeName": "贵州茅台",
-            "tradeCode": "600519",
-            "stockStatus": "交易中",
-            "tradePrice": 358.74,
-            "change": "2.55%",
-            "pchg": "10.01%",
-            "tradeDate": "2017-02-22",
-            "tradeTime": "10:37:03",
-            "topen": 362.43,
-            "lclose": 362.43,
-            "thigh": 362.43,
-            "tlow": 352.43
-          },
-          "predictLink": [{
-            "text": "预测",
-            "style": "isRed",
-            "link": "",
-            "value": "预测"
-          }, {
-            "text": "热点",
-            "style": "",
-            "link": "",
-            "value": "热点"
-          }, {
-            "text": "选股",
-            "style": "",
-            "link": "http:\\#",
-            "value": "选股"
-          }]
-        }
-      }
-    ]
-  };
-  this.choosedStocks = {
-    "code": 0,
-    "dt": 1486624881551,
-    "status": "success",
-    "content": [{
-      "type": "optimization",
-      "data": {
-        "body": {
-          "date": "2017-02-23",
-          "stocks": [{
-            "name": "航天电子",
-            "code": "600879",
-            "topen": 16.89,
-            "pchg": "1.29%"
-          }, {
-            "name": "东方铁塔",
-            "code": "002545",
-            "topen": 11.82,
-            "pchg": "-0.51%"
-          }]
-        },
-        "predictLink": [{
-          "text": "点击获取更多",
-          "style": "link",
-          "link": "http://#h5页面",
-          "value": "点击获取更多"
-        }]
-      }
-    }]
-  };
-
-    this.answerStyle = {
-      'WAITING': 1,
-      'ASK_HINT': 2,
-      'PLAIN_TEXT': 3,
-      'STOCK_QUOTATION':4,
-      'HOT_STOCKS': 5,
-      'STOCK_HOT': 6,
-      'STOCK_FORECAST': 7
-    };
 }
 
 NetConnector.prototype = {
@@ -171,6 +61,50 @@ NetConnector.prototype = {
       }
     });
   },
+  _formatStockQuotation: function(data) {
+    var body = data.body;
+    var predictLinks = data.predictLinks;
+    var stockStatus = '';
+    switch (body.stockStatus.toUpperCase()) {
+      case 'S':
+        stockStatus = '开市前';
+        break;
+      case 'C':
+        stockStatus = '集合竞价';
+        break;
+      case 'T':
+        stockStatus = '交易中';
+        break;
+      case 'B':
+        stockStatus = '休市';
+        break;
+      case 'E':
+        stockStatus = '收盘';
+        break;
+      case 'P':
+        stockStatus = '停牌';
+        break;
+    }
+    body.stockStatus = stockStatus;
+    var tradeDate = body.tradeDate;
+    body.tradeDate = tradeDate.substr(4, 2) + '-' + tradeDate.substr(6, 2);
+    var tradeTime = body.tradeTime;
+    body.tradeTime = tradeTime.substr(0, 2) + ':' + tradeTime.substr(2, 2) + ':' + tradeTime.substr(4, 2);
+    var pchg = body.pchg * 100;
+    var formated_pchg = pchg.toFixed(2) + '%';
+    if (pchg > 0) {
+      formated_pchg = '+' + formated_pchg;
+    } else if (pchg < 0) {
+      formated_pchg = '-' + formated_pchg;
+    }
+    body.formated_pchg = formated_pchg;
+    var extral = [];
+    predictLinks.forEach(function(it) {
+      extral.push(it.text);
+    })
+    body.extral = extral;
+    return body;
+  },
   getSIRIAnswer: function(question, cb) {
     var self = this;
     // the data from server
@@ -215,7 +149,7 @@ NetConnector.prototype = {
             case 'quotation':
               formated_contents.push({
                 style: self.answerStyle.STOCK_QUOTATION,
-                data: content.data.body
+                data: self._formatStockQuotation(content.data)
               });
               break;
             case 'optimization':
@@ -252,6 +186,117 @@ NetConnector.prototype = {
     });
   },
 
+  set_test_data: function() {
+    this.recommendAnswer =  {
+      "code": 0,
+      "dt": 1486624881551,
+      "status": "success",
+      "content": [{
+        "type": "recommend",
+        "data": {
+          "body": [{
+            "studio": "你可以这样问",
+            "items": [
+              "600519",
+              "开户",
+              "选股",
+              "KDJ",
+              "茅台行情"
+            ]
+          }, {
+            "studio": "你可以这样问",
+            "items": [
+              "热议榜",
+              "洗盘",
+              "600519",
+              "茅台指标",
+              "茅台行情"
+            ]
+          }],
+          "predictLink": []
+        }
+      }]
+    };
+    this.quotationAnswer = {
+      "code": 0,
+      "dt": 1486624881551,
+      "status": "success",
+      "content": [
+        {
+          "type": "plain", //plain或者其他没有匹配的模板统一走这个
+          "data": {
+            "body": "该股票行情如下：",
+            "predictLink": []
+          }
+        }, 
+        {
+          "type": "quotation",
+          "data": {
+            "body": {
+              "tradeName": "贵州茅台",
+              "tradeCode": "600519",
+              "stockStatus": "交易中",
+              "tradePrice": 358.74,
+              "change": "2.55%",
+              "pchg": "10.01%",
+              "tradeDate": "2017-02-22",
+              "tradeTime": "10:37:03",
+              "topen": 362.43,
+              "lclose": 362.43,
+              "thigh": 362.43,
+              "tlow": 352.43
+            },
+            "predictLink": [{
+              "text": "预测",
+              "style": "isRed",
+              "link": "",
+              "value": "预测"
+            }, {
+              "text": "热点",
+              "style": "",
+              "link": "",
+              "value": "热点"
+            }, {
+              "text": "选股",
+              "style": "",
+              "link": "http:\\#",
+              "value": "选股"
+            }]
+          }
+        }
+      ]
+    };
+    this.choosedStocks = {
+      "code": 0,
+      "dt": 1486624881551,
+      "status": "success",
+      "content": [{
+        "type": "optimization",
+        "data": {
+          "body": {
+            "date": "2017-02-23",
+            "stocks": [{
+              "name": "航天电子",
+              "code": "600879",
+              "topen": 16.89,
+              "pchg": "1.29%"
+            }, {
+              "name": "东方铁塔",
+              "code": "002545",
+              "topen": 11.82,
+              "pchg": "-0.51%"
+            }]
+          },
+          "predictLink": [{
+            "text": "点击获取更多",
+            "style": "link",
+            "link": "http://#h5页面",
+            "value": "点击获取更多"
+          }]
+        }
+      }]
+    };
+  },
   createAnswer: function(e) {
     var t = $("#" + e.cardName).find(".answer_row .ans_cont").eq(1),
       s = "";

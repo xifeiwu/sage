@@ -118,7 +118,7 @@ a {
               position: relative;
               &#stock_quotation {
                 position: relative;
-                width: 100%;
+                max-width: 100%;
                 padding: 0px;
               }
               a {
@@ -433,7 +433,7 @@ a {
 #stock_quotation {
   .header {
     border-bottom: 1px solid #d4d7dc;
-    padding: 15px;
+    padding: 15px 10px;
     .title {
       text-align: center;
       font-size: 18px;
@@ -450,7 +450,7 @@ a {
   .content {
     width: 100%;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 15px 0px;
     margin: 0px;
     @include flex_justify_content();
     .first {
@@ -463,6 +463,12 @@ a {
         @include flex_justify_content();
         font-size: 16px;
         line-height: 22px;
+      }
+    }
+    .item {
+      margin: 0px 10px;
+      .sub_item {
+        margin-top: 18px;
       }
     }
     .price_show span {

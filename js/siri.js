@@ -244,20 +244,24 @@
             '<div class="status">' + data.stockStatus + '&nbsp' + data.tradeDate + '&nbsp' + data.tradeTime + '</div>' +
           '</div>' +
          ' <div class="content">' +
-            '<div class="first">' +
+            '<div class="first item">' +
               '<div class="trade_price">' + data.tradePrice + '</div>' +
               '<div class="price_change">' +
                 '<div class="change">' + data.change + '</div>' +
-                '<div class="pchg">' + data.pchg + '</div>' +
+                '<div class="pchg">' + data.formated_pchg + '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="second price_show">' +
-              '<div><span>最&nbsp高</span><span>&nbsp' + data.thigh + '</span></div>' +
-              '<div><span>今&nbsp开</span><span>&nbsp' + data.topen + '</span></div>' +
+            '<div class="item price_show">' +
+              '<div class="sub_item">' +
+                '<div><span>最&nbsp高</span><span>&nbsp' + data.thigh + '</span></div>' +
+                '<div><span>今&nbsp开</span><span>&nbsp' + data.topen + '</span></div>' +
+              '</div>' +
             '</div>' +
-            '<div class="third price_show">' +
-              '<div><span>最&nbsp低</span><span>&nbsp' + data.tlow + '</span></div>' +
-              '<div><span>昨&nbsp收</span><span>&nbsp' + data.lclose + '</span></div>' +
+            '<div class="item price_show">' +
+              '<div class="sub_item">' +
+                '<div><span>最&nbsp低</span><span>&nbsp' + data.tlow + '</span></div>' +
+                '<div><span>昨&nbsp收</span><span>&nbsp' + data.lclose + '</span></div>' +
+              '</div>' +
             '</div>' +
           '</div>' +
           '<div class="footer">' +
@@ -265,9 +269,8 @@
             '<div class="active_link" data-question="' + data.tradeCode + '热点">热点</div>' +
           '</div>' +
         '</div>';
-
           break;
-          case this.answerStyle.HOT_STOCKS:
+        case this.answerStyle.HOT_STOCKS:
           var data = options.data;
           var tableContent = data.stocks.map(function(it) {
             return '<tr><td><span class="stock_name">' + it.name + 
