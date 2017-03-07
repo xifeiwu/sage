@@ -25,7 +25,7 @@ NetConnector.prototype = {
     return host + path + (token ? '&token=' + token : '');
   },
 
-  askSIRIServer: function(options, cb) {
+  askServer: function(options, cb) {
     var type = options.type;
     var question = options.question;
     switch (type) {
@@ -176,6 +176,7 @@ NetConnector.prototype = {
       type : "get",
       contentType : "application/json;charset=utf-8",
       dataType : "json",
+      timeout: 12000,
       success : function(response) {
         $.output(response);
         if (response.code == 0) {

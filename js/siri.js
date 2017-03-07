@@ -48,7 +48,7 @@
 '</div>';
         return answerDom;
       }
-      this.container.netConnector.askSIRIServer({
+      this.container.netConnector.askServer({
         type: 'ASK',
         question: 'recommend'
       }, function(err, content) {
@@ -179,14 +179,14 @@
       }
       content = content.trim();
       if (content.length > 0) {
-        this.netConnector.askSIRIServer({
+        this.netConnector.askServer({
           type: 'ASK',
           question: content
         }, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
               type: this.answerStyle.PLAIN_TEXT,
-              data: '您好，我是哲，私人理财专家，有关股票证券问题都可以问我。'
+              content: '您好，我是哲，私人理财专家，有关股票证券问题都可以问我。'
             }];
           }
           var cardNode = this.createCard({
@@ -214,29 +214,28 @@
           type: this.cardStyle.USER_ASK,
           content: question,
         });
-        // return;
-        this.netConnector.askSIRIServer({
+        this.netConnector.askServer({
           type: 'ASK',
           question: question
         }, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
-              type: this.answerStyle.PLAIN_TEXT,
+              style: this.answerStyle.PLAIN_TEXT,
               content: '网络好像出了些问题。。。'
             }];
           }
           this.hideLoading();
-          // $.output(contents);
-          formated_contents.forEach(function(it) {
-            cardNode.append($(this.createAnswerDOM(it)));
-            this.bottomDiv({
-              cardName: this.cardName
-            });
-            this.scrollTopAnimate({
-              cardName: this.cardName,
-              callBack: function() {}
-            });
-          }.bind(this));
+          var answerDOM = formated_contents.map(function(it) {
+            return this.createAnswerDOM(it);
+          }.bind(this)).join('');
+          cardNode.append($(answerDOM));
+          this.bottomDiv({
+            cardName: this.cardName
+          });
+          this.scrollTopAnimate({
+            cardName: this.cardName,
+            callBack: function() {}
+          });
         }.bind(this));
       }
     },
