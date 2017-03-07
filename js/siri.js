@@ -267,62 +267,58 @@
           answerDom = '<div class="ans_box" id="stock_forecast">' + options.content + '</div>';
           break;
         case this.answerStyle.STOCK_QUOTATION:
-        var content = options.content;
-        answerDom = 
-        '<div class="ans_box" id="stock_quotation">' +
-          '<div class="header">' +
-            '<div class="title">' + content.tradeName + '&nbsp' + content.tradeCode + '</div>' +
-            '<div class="status">' + content.stockStatus + '&nbsp' + content.tradeDate + '&nbsp' + content.tradeTime + '</div>' +
-          '</div>' +
-         ' <div class="content">' +
-            '<div class="first item">' +
-              '<div class="trade_price">' + content.tradePrice + '</div>' +
-              '<div class="price_change">' +
-                '<div class="change">' + content.change + '</div>' +
-                '<div class="pchg">' + content.formated_pchg + '</div>' +
+          var content = options.content;
+          answerDom = 
+          '<div class="ans_box" id="stock_quotation">' +
+            '<div class="header">' +
+              '<div class="title">' + content.tradeName + '&nbsp' + content.tradeCode + '</div>' +
+              '<div class="status">' + content.stockStatus + '&nbsp' + content.tradeDate + '&nbsp' + content.tradeTime + '</div>' +
+            '</div>' +
+           ' <div class="content">' +
+              '<div class="first item ' + content.pchg_state +'">' +
+                '<div class="trade_price">' + content.tradePrice + '</div>' +
+                '<div class="price_change">' +
+                  '<div class="change">' + content.change + '</div>' +
+                  '<div class="pchg">' + content.formated_pchg + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="item price_show">' +
+                '<div class="sub_item">' +
+                  '<div><span>最&nbsp高</span><span>&nbsp' + content.thigh + '</span></div>' +
+                  '<div><span>今&nbsp开</span><span>&nbsp' + content.topen + '</span></div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="item price_show">' +
+                '<div class="sub_item">' +
+                  '<div><span>最&nbsp低</span><span>&nbsp' + content.tlow + '</span></div>' +
+                  '<div><span>昨&nbsp收</span><span>&nbsp' + content.lclose + '</span></div>' +
+                '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="item price_show">' +
-              '<div class="sub_item">' +
-                '<div><span>最&nbsp高</span><span>&nbsp' + content.thigh + '</span></div>' +
-                '<div><span>今&nbsp开</span><span>&nbsp' + content.topen + '</span></div>' +
-              '</div>' +
+            '<div class="footer">' +
+            content.links.map(function(it) {
+              return '<div class="active_link">' + it + '</div>';
+            }).join('') +
             '</div>' +
-            '<div class="item price_show">' +
-              '<div class="sub_item">' +
-                '<div><span>最&nbsp低</span><span>&nbsp' + content.tlow + '</span></div>' +
-                '<div><span>昨&nbsp收</span><span>&nbsp' + content.lclose + '</span></div>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="footer">' +
-          content.links.map(function(it) {
-            return '<div class="active_link">' + it + '</div>';
-          }).join('') +
-          '</div>' +
-        '</div>';
+          '</div>';
           break;
         case this.answerStyle.HOT_STOCKS:
           var content = options.content;
           var tableContent = content.stocks.map(function(it) {
             return '<tr><td><span class="stock_name">' + it.name + 
               '</span>&nbsp<span class="stock_code">' + it.code + '</span></td>' +
-              '<td>' + it.topen + '</td><td class="pchg">' + it.pchg + '</td></tr>';
+              '<td>' + it.topen + '</td><td class="pchg ' + it.pchg_state +'">' + it.formated_pchg + '</td></tr>';
           }).join('');
           var answerDom = 
           '<div class="ans_box" id="hot_stocks">' +
-            '<div class="stock_qutation">' +
-              '<div class="top">会牛智选</div>' +
-              '<div class="content">' +
-                '<div class="title">今日入选（'  + content.date + '）</div>' +
-                '<div class="list">' +
-                '<table class="stock_list">' +
-                '<tr><th>股票名称</th><th>入选价</th><th>最新涨幅</th></tr>' + tableContent +
-                '</table>' +
-                '</div>' +
-              '</div>' +
-              '<div class="footer active_link">点击获取更多&nbsp></div>' +
+            '<div class="header">会牛智选</div>' +
+            '<div class="content">' +
+              '<div class="title">今日入选（'  + content.date + '）</div>' +
+              '<table class="stock_list">' +
+              '<tr><th>股票名称</th><th>入选价</th><th>最新涨幅</th></tr>' + tableContent +
+              '</table>' +
             '</div>' +
+            '<a class="footer" href="' + content.link.link + '">' + content.link.text +'&nbsp></a>' +
           '</div>';
           break;
       }

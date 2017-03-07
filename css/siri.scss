@@ -121,6 +121,12 @@ a {
                 max-width: 100%;
                 padding: 0px;
               }
+              &#hot_stocks {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 0px 10px;
+                max-width: 320px;
+              }
               a {
                 margin: 0 5px;
               }
@@ -430,6 +436,7 @@ a {
   }
 }
 
+// 股票行情
 #stock_quotation {
   .header {
     border-bottom: 1px solid #d4d7dc;
@@ -454,9 +461,17 @@ a {
     margin: 0px;
     @include flex_justify_content();
     .first {
-      color: #ff5871;
       box-sizing: content-box;
       min-width: 100px;
+      &.up {
+        color: #FF5871;
+      }
+      &.down {
+        color: #5FCD8B;
+      }
+      &.stay {
+        color: #909090;
+      }
       .trade_price {
         font-size: 36px;
         line-height: 45px;
@@ -501,76 +516,83 @@ a {
   }
 }
 
-#dialog .answer_row .ans_cont .ans_box#hot_stocks {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0px 10px;
-}
-#hot_stocks .top {
-  font-size: 18px;
-  color: #595959;
-  line-height: 50px;
-  border-bottom: 1px solid #d4d7dc;
-  text-align: center;
-}
-#hot_stocks .content .title {
-  font-size: 16px;
-  color: #595959;
-  line-height: 30px;
-}
-#hot_stocks .content table {
-  margin-top: 5px;
-  width: 100%;
-  border-collapse: collapse;
-}
-#hot_stocks .content table tr {
-  height: 45px;
-  border-bottom: 1px solid #d4d7dc;
-}
-#hot_stocks .content table th {
-  font-size: 14px;
-  line-height: 45px;
-  color: #909090;
-  font-weight: normal;
-}
-#hot_stocks .content table th {
-  text-align: center;
-}
-#hot_stocks .content table th:first-child {
-  text-align: left;
-}
-#hot_stocks .content table td {
-  font-size: 16px;
-  line-height: 45px;
-  color: #595959;
-  text-align: center;
-}
-#hot_stocks .content table td:first-child {
-  text-align: left;
-}
-#hot_stocks .content table td span.stock_name {
-  color: #595959;
-}
-#hot_stocks .content table td span.stock_code {
-  color: #909090;
-}
-#hot_stocks .content table td.pchg {
-  color: #FF5871;
-}
-#hot_stocks .footer {
-  font-size: 16px;
-  color: #595959;
-  line-height: 45px;
-  text-align: center;
+// 会牛选股
+#hot_stocks {
+  .header {
+    font-size: 18px;
+    color: #595959;
+    line-height: 45px;
+    border-bottom: 1px solid #d4d7dc;
+    text-align: center;
+  }
+  .content {
+    .title {
+      font-size: 16px;
+      color: #595959;
+      line-height: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      tr {
+        height: 40px;
+        border-bottom: 1px solid #d4d7dc;
+      }
+      th {
+        font-size: 14px;
+        line-height: 45px;
+        color: #909090;
+        font-weight: normal;
+        text-align: center;
+        &:first-child {
+          text-align: left;
+        }
+      }
+      td {
+        font-size: 16px;
+        line-height: 45px;
+        color: #595959;
+        text-align: center;
+        &:first-child {
+          text-align: left;
+        }
+        .stock_name {
+          color: #595959;
+        }
+        .stock_code {
+          color: #909090;
+        }
+        &.pchg {
+          &.up {
+            color: #FF5871;
+          }
+          &.down {
+            color: #5FCD8B;
+          }
+          &.stay {
+            color: #909090;
+          }
+        }
+      }
+    }
+  }
+  .footer {
+    display: block;
+    font-size: 16px;
+    color: #595959;
+    line-height: 40px;
+    text-align: center;
+  }
 }
 
+// 股票热度
 #stock_hot {
   .stock_name, .stock_code, .hot_score, .total, .hot_index, .hot_index_change, .hot_index_change_rate {
     color: #457AEE;
   }
 }
 
+// 股票预测
 #stock_forecast {
   .stock_name, .stock_code, .forecast_price, .d_value, .d_percent {
     color: #457AEE;

@@ -65,50 +65,6 @@ NetConnector.prototype = {
   //     }
   //   });
   // },
-  _formatStockQuotation: function(data) {
-    var body = data.body;
-    var predictLinks = data.predictLinks;
-    var stockStatus = '';
-    switch (body.stockStatus.toUpperCase()) {
-      case 'S':
-        stockStatus = '开市前';
-        break;
-      case 'C':
-        stockStatus = '集合竞价';
-        break;
-      case 'T':
-        stockStatus = '交易中';
-        break;
-      case 'B':
-        stockStatus = '休市';
-        break;
-      case 'E':
-        stockStatus = '收盘';
-        break;
-      case 'P':
-        stockStatus = '停牌';
-        break;
-    }
-    body.stockStatus = stockStatus;
-    var tradeDate = body.tradeDate;
-    body.tradeDate = tradeDate.substr(4, 2) + '-' + tradeDate.substr(6, 2);
-    var tradeTime = body.tradeTime;
-    body.tradeTime = tradeTime.substr(0, 2) + ':' + tradeTime.substr(2, 2) + ':' + tradeTime.substr(4, 2);
-    var pchg = body.pchg * 100;
-    var formated_pchg = pchg.toFixed(2) + '%';
-    if (pchg > 0) {
-      formated_pchg = '+' + formated_pchg;
-    } else if (pchg < 0) {
-      formated_pchg = '-' + formated_pchg;
-    }
-    body.formated_pchg = formated_pchg;
-    var links = [];
-    predictLinks.forEach(function(it) {
-      links.push(it.text);
-    })
-    body.links = links;
-    return body;
-  },
   _getSIRIAnswer: function(question, cb) {
     var self = this;
     // the data from server
@@ -159,7 +115,7 @@ NetConnector.prototype = {
             case 'optimization':
               formated_contents.push({
                 style: self.answerStyle.HOT_STOCKS,
-                content: content.data.body
+                content: self._formatHotStocks(content.data)
               });
               break;
           }
@@ -189,6 +145,84 @@ NetConnector.prototype = {
         cb(JSON.stringify(mXMLHttpRequest));
       }
     });
+  },
+
+  _formatHotStocks: function(data) {
+    var body = data.body;
+    var predictLinks = data.predictLinks;
+    var date = body.date;
+    var date = $.toLocaleFormat(new Date(date), 'yyyy.MM.dd');
+    body.date = date;
+    body.stocks.forEach(function(it) {
+      var topen = parseFloat(it.topen);
+      var pchg = parseFloat(it.pchg) * 100;
+      var pchg_state = '';
+      it.topen = topen.toFixed(2);
+      if (pchg > 0) {
+        pchg = '+' + pchg.toFixed(2) + '%';
+        pchg_state = 'up';
+      } else if (pchg < 0) {
+        pchg = '-' + pchg.toFixed(2) + '%';
+        pchg_state = 'down';
+      } else {
+        pchg = pchg.toFixed(2) + '%';
+        pchg_state = 'stay';
+      }
+      it.formated_pchg = pchg;
+      it.pchg_state = pchg_state;
+    });
+    body.link = predictLinks[0];
+    return body;
+  },
+  _formatStockQuotation: function(data) {
+    var body = data.body;
+    var predictLinks = data.predictLinks;
+    var stockStatus = '';
+    switch (body.stockStatus.toUpperCase()) {
+      case 'S':
+        stockStatus = '开市前';
+        break;
+      case 'C':
+        stockStatus = '集合竞价';
+        break;
+      case 'T':
+        stockStatus = '交易中';
+        break;
+      case 'B':
+        stockStatus = '休市';
+        break;
+      case 'E':
+        stockStatus = '收盘';
+        break;
+      case 'P':
+        stockStatus = '停牌';
+        break;
+    }
+    body.stockStatus = stockStatus;
+    var tradeDate = body.tradeDate;
+    body.tradeDate = tradeDate.substr(4, 2) + '-' + tradeDate.substr(6, 2);
+    var tradeTime = body.tradeTime;
+    body.tradeTime = tradeTime.substr(0, 2) + ':' + tradeTime.substr(2, 2) + ':' + tradeTime.substr(4, 2);
+    var pchg = body.pchg * 100;
+    var pchg_state = '';
+    if (pchg > 0) {
+      pchg = '+' + pchg.toFixed(2) + '%';
+      pchg_state = 'up';
+    } else if (pchg < 0) {
+      pchg = '-' + pchg.toFixed(2) + '%';
+      pchg_state = 'down';
+    } else {
+      pchg = pchg.toFixed(2) + '%';
+      pchg_state = 'stay';
+    }
+    body.formated_pchg = pchg;
+    body.pchg_state = pchg_state;
+    var links = [];
+    predictLinks.forEach(function(it) {
+      links.push(it.text);
+    })
+    body.links = links;
+    return body;
   },
 
   set_test_data: function() {
