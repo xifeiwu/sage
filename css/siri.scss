@@ -455,6 +455,8 @@ a {
     @include flex_justify_content();
     .first {
       color: #ff5871;
+      box-sizing: content-box;
+      min-width: 100px;
       .trade_price {
         font-size: 36px;
         line-height: 45px;

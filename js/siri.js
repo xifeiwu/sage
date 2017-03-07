@@ -151,8 +151,16 @@
       }.bind(this));
       $.touchEvent($('#dialog'), '.active_link', function(evt) {
         var target = evt.target;
-        $.output(target.dataset.question);
-        this.askSIRI(target.dataset.question);
+        var question = null;
+        if (target.dataset.question) {
+          question = target.dataset.question;
+        } else {
+          question = $(target).text();
+        }
+        $.output(question);
+        if (question) {
+          this.askSIRI(question);
+        }
       }.bind(this));
       // $('#dialog').on('tap', function(evt) {
       //   console.log(evt);
@@ -209,7 +217,7 @@
     },
     createAnswerDOM: function(options) {
       var answerDom = '';
-      // console.log(options);
+      $.output(options);
       switch (options.style) {
         case this.answerStyle.WAITING:
           answerDom = 
@@ -220,7 +228,7 @@
           '</div>';
           break;
         case this.answerStyle.ASK_HINT:
-          answerDom = this.createAnswerDOM({
+          return this.createAnswerDOM({
             style: this.answerStyle.PLAIN_TEXT,
             showType: "new",
             data: options.data
@@ -265,8 +273,9 @@
             '</div>' +
           '</div>' +
           '<div class="footer">' +
-            '<div class="active_link" data-question="' + data.tradeCode + '预测">预测</div>' +
-            '<div class="active_link" data-question="' + data.tradeCode + '热点">热点</div>' +
+          data.links.map(function(it) {
+            return '<div class="active_link">' + it + '</div>';
+          }).join('') +
           '</div>' +
         '</div>';
           break;

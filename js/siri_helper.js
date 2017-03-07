@@ -49,7 +49,9 @@ NetConnector.prototype = {
       success : function(response) {
         $.output(response);
         if (response.code == 0) {
-          self.setToken(response.token);
+          if (response.token) {
+            self.setToken(response.token);
+          }
           var content = response.content;
           if (content[0].type === 'recommend') {
             cb(null, content[0]);
@@ -98,11 +100,11 @@ NetConnector.prototype = {
       formated_pchg = '-' + formated_pchg;
     }
     body.formated_pchg = formated_pchg;
-    var extral = [];
+    var links = [];
     predictLinks.forEach(function(it) {
-      extral.push(it.text);
+      links.push(it.text);
     })
-    body.extral = extral;
+    body.links = links;
     return body;
   },
   getSIRIAnswer: function(question, cb) {
