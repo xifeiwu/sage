@@ -49,7 +49,7 @@
         return answerDom;
       }
       this.container.netConnector.askSIRIServer({
-        type: 'ASK', 
+        type: 'ASK',
         question: 'recommend'
       }, function(err, content) {
         // $.output(content);
@@ -110,14 +110,12 @@
     this.cardName = "card_1";
     this.sessionAjaxCount = 0;
     this.sessionStatus = 0;
-    // this.wrapperHeight = $(window).height();
-    // this.dialogWrapper = $('#dialog_wrapper');
     this.dialogWrapper = document.getElementById('dialog_wrapper');
     this.wrapperHeight = $(this.dialogWrapper).height();
     this.cardStyle = {
-      'SIRI_INTRO': 1,
+      'SIRI_SAY': 1,
       // 'SIRI_ASK_HINT': 2,
-      'CONVERSATION': 3,
+      'USER_ASK': 3,
     };
     this.netConnector = new NetConnector();
     this.answerStyle = this.netConnector.answerStyle;
@@ -126,9 +124,7 @@
     init: function() {
       this.siriAskHint = new SIRIAskHint(this);
       this.addEvent();
-      this.createCard({
-        type: this.cardStyle.SIRI_INTRO,
-      });
+      this.siriSay('hi');
     },
     addEvent: function() {
       $("#input_bar .btn_go").on("click", function() {
@@ -177,32 +173,61 @@
       //   }
       // });
     },
+    siriSay: function(content) {
+      if (!content || content.length == 0) {
+        return;
+      }
+      content = content.trim();
+      if (content.length > 0) {
+        this.netConnector.askSIRIServer({
+          type: 'ASK',
+          question: content
+        }, function(err, formated_contents) {
+          if (err) {
+            formated_contents = [{
+              type: this.answerStyle.PLAIN_TEXT,
+              data: '您好，我是哲，私人理财专家，有关股票证券问题都可以问我。'
+            }];
+          }
+          var cardNode = this.createCard({
+            type: this.cardStyle.SIRI_SAY,
+            content: formated_contents,
+          });
+          this.bottomDiv({
+            cardName: this.cardName
+          });
+          this.scrollTopAnimate({
+            cardName: this.cardName,
+            callBack: function() {}
+          });
+        }.bind(this));
+
+      }
+    },
     askSIRI: function(question) {
-      console.log(question);
       if (!question || question.length == 0) {
         return;
       }
       question = question.trim();
       if (question.length > 0) {
-        options = {
-          type: this.cardStyle.CONVERSATION,
-          data: question,
-        };
-        var cardNode = this.createCard(options);
+        var cardNode = this.createCard({
+          type: this.cardStyle.USER_ASK,
+          content: question,
+        });
         // return;
         this.netConnector.askSIRIServer({
-          tyep: 'ASK', 
+          type: 'ASK',
           question: question
-        }, function(err, contents) {
+        }, function(err, formated_contents) {
           if (err) {
-            contents = [{
-              type: 'plain',
-              data: '网络好像出了些问题。。。'
-            }]
+            formated_contents = [{
+              type: this.answerStyle.PLAIN_TEXT,
+              content: '网络好像出了些问题。。。'
+            }];
           }
-          this.hideLoading(options);
+          this.hideLoading();
           // $.output(contents);
-          contents.forEach(function(it) {
+          formated_contents.forEach(function(it) {
             cardNode.append($(this.createAnswerDOM(it)));
             this.bottomDiv({
               cardName: this.cardName
@@ -230,58 +255,57 @@
         case this.answerStyle.ASK_HINT:
           return this.createAnswerDOM({
             style: this.answerStyle.PLAIN_TEXT,
-            showType: "new",
-            data: options.data
+            content: options.content
           }) + '<div class="show_ask_hint"><span>你可以这样问我 ></span></div>';
           break;
         case this.answerStyle.PLAIN_TEXT:
-          answerDom = '<div class="ans_box">' + options.data + '</div>';
+          answerDom = '<div class="ans_box">' + options.content + '</div>';
           break;
         case this.answerStyle.STOCK_HOT:
-          answerDom = '<div class="ans_box" id="stock_hot">' + options.data + '</div>';
+          answerDom = '<div class="ans_box" id="stock_hot">' + options.content + '</div>';
           break;
         case this.answerStyle.STOCK_FORECAST:
-          answerDom = '<div class="ans_box" id="stock_forecast">' + options.data + '</div>';
+          answerDom = '<div class="ans_box" id="stock_forecast">' + options.content + '</div>';
           break;
         case this.answerStyle.STOCK_QUOTATION:
-        var data = options.data;
+        var content = options.content;
         answerDom = 
         '<div class="ans_box" id="stock_quotation">' +
           '<div class="header">' +
-            '<div class="title">' + data.tradeName + '&nbsp' + data.tradeCode + '</div>' +
-            '<div class="status">' + data.stockStatus + '&nbsp' + data.tradeDate + '&nbsp' + data.tradeTime + '</div>' +
+            '<div class="title">' + content.tradeName + '&nbsp' + content.tradeCode + '</div>' +
+            '<div class="status">' + content.stockStatus + '&nbsp' + content.tradeDate + '&nbsp' + content.tradeTime + '</div>' +
           '</div>' +
          ' <div class="content">' +
             '<div class="first item">' +
-              '<div class="trade_price">' + data.tradePrice + '</div>' +
+              '<div class="trade_price">' + content.tradePrice + '</div>' +
               '<div class="price_change">' +
-                '<div class="change">' + data.change + '</div>' +
-                '<div class="pchg">' + data.formated_pchg + '</div>' +
+                '<div class="change">' + content.change + '</div>' +
+                '<div class="pchg">' + content.formated_pchg + '</div>' +
               '</div>' +
             '</div>' +
             '<div class="item price_show">' +
               '<div class="sub_item">' +
-                '<div><span>最&nbsp高</span><span>&nbsp' + data.thigh + '</span></div>' +
-                '<div><span>今&nbsp开</span><span>&nbsp' + data.topen + '</span></div>' +
+                '<div><span>最&nbsp高</span><span>&nbsp' + content.thigh + '</span></div>' +
+                '<div><span>今&nbsp开</span><span>&nbsp' + content.topen + '</span></div>' +
               '</div>' +
             '</div>' +
             '<div class="item price_show">' +
               '<div class="sub_item">' +
-                '<div><span>最&nbsp低</span><span>&nbsp' + data.tlow + '</span></div>' +
-                '<div><span>昨&nbsp收</span><span>&nbsp' + data.lclose + '</span></div>' +
+                '<div><span>最&nbsp低</span><span>&nbsp' + content.tlow + '</span></div>' +
+                '<div><span>昨&nbsp收</span><span>&nbsp' + content.lclose + '</span></div>' +
               '</div>' +
             '</div>' +
           '</div>' +
           '<div class="footer">' +
-          data.links.map(function(it) {
+          content.links.map(function(it) {
             return '<div class="active_link">' + it + '</div>';
           }).join('') +
           '</div>' +
         '</div>';
           break;
         case this.answerStyle.HOT_STOCKS:
-          var data = options.data;
-          var tableContent = data.stocks.map(function(it) {
+          var content = options.content;
+          var tableContent = content.stocks.map(function(it) {
             return '<tr><td><span class="stock_name">' + it.name + 
               '</span>&nbsp<span class="stock_code">' + it.code + '</span></td>' +
               '<td>' + it.topen + '</td><td class="pchg">' + it.pchg + '</td></tr>';
@@ -291,7 +315,7 @@
             '<div class="stock_qutation">' +
               '<div class="top">会牛智选</div>' +
               '<div class="content">' +
-                '<div class="title">今日入选（'  + data.date + '）</div>' +
+                '<div class="title">今日入选（'  + content.date + '）</div>' +
                 '<div class="list">' +
                 '<table class="stock_list">' +
                 '<tr><th>股票名称</th><th>入选价</th><th>最新涨幅</th></tr>' + tableContent +
@@ -327,16 +351,18 @@
       var askDom = '';
       var answerDom = '';
       switch (options.type) {
-        case this.cardStyle.SIRI_INTRO:
-          askDom = '',
-          answerDom = this.createAnswerDOM({
-            style: this.answerStyle.PLAIN_TEXT,
-            showType: "new",
-            data: '您好，我是牛博士，私人理财专家，有关股票证券问题都可以问我'
-          });
+        case this.cardStyle.SIRI_SAY:
+          askDom = '';
+          var contents = options.content;
+          answerDom = contents.map(function(it) {
+            return this.createAnswerDOM({
+              style: it.style,
+              content: it.content
+            });
+          }.bind(this)).join('');
         break;
-        case this.cardStyle.CONVERSATION:
-          askDom = '<div class="ask_row"><span>' + options.data + '</span></div>'
+        case this.cardStyle.USER_ASK:
+          askDom = '<div class="ask_row"><span>' + options.content + '</span></div>'
           answerDom = this.createAnswerDOM({
             style: this.answerStyle.WAITING,
           });
@@ -363,7 +389,7 @@
       // }
       return card;
     },
-    hideLoading: function(e) {
+    hideLoading: function() {
       $('.answer_row .ans_cont .ans_box .dots_loading').closest('.answer_row').remove();
     },
     createIframe: function(e) {

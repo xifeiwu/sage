@@ -17,52 +17,54 @@ NetConnector.prototype = {
       localStorage.token = token;
     // }
   },
+
   getURL: function(question) {
     var host = $.getAjaxHost(this.profile);
     var path = 'bot/api/v1/botServer/sessionOperator/receiveh5?msg=' + question;
     var token = localStorage.token;
     return host + path + (token ? '&token=' + token : '');
   },
+
   askSIRIServer: function(options, cb) {
     var type = options.type;
     var question = options.question;
     switch (type) {
       case 'ASK_HINT':
-        this.getAskHint(cb);
+        // this.getAskHint(cb);
         break;
       case 'ASK':
       default:
-        this.getSIRIAnswer(question, cb);
+        this._getSIRIAnswer(question, cb);
         break;
     }
   },
-  getAskHint: function(cb) {
-    var self = this;
-    var token = localStorage.token;
-    var url = this.getURL('recommend');
-    $.output(url);
-    $.ajax({
-      url : url,
-      type : "get",
-      contentType : "application/json;charset=utf-8",
-      dataType : "json",
-      success : function(response) {
-        $.output(response);
-        if (response.code == 0) {
-          if (response.token) {
-            self.setToken(response.token);
-          }
-          var content = response.content;
-          if (content[0].type === 'recommend') {
-            cb(null, content[0]);
-          }
-        }
-      },
-      error : function(mXMLHttpRequest, mTextStatus, mErrorThrown) {
-        cb(JSON.stringify(mXMLHttpRequest));
-      }
-    });
-  },
+  // getAskHint: function(cb) {
+  //   var self = this;
+  //   var token = localStorage.token;
+  //   var url = this.getURL('recommend');
+  //   $.output(url);
+  //   $.ajax({
+  //     url : url,
+  //     type : "get",
+  //     contentType : "application/json;charset=utf-8",
+  //     dataType : "json",
+  //     success : function(response) {
+  //       $.output(response);
+  //       if (response.code == 0) {
+  //         if (response.token) {
+  //           self.setToken(response.token);
+  //         }
+  //         var content = response.content;
+  //         if (content[0].type === 'recommend') {
+  //           cb(null, content[0]);
+  //         }
+  //       }
+  //     },
+  //     error : function(mXMLHttpRequest, mTextStatus, mErrorThrown) {
+  //       cb(JSON.stringify(mXMLHttpRequest));
+  //     }
+  //   });
+  // },
   _formatStockQuotation: function(data) {
     var body = data.body;
     var predictLinks = data.predictLinks;
@@ -107,7 +109,7 @@ NetConnector.prototype = {
     body.links = links;
     return body;
   },
-  getSIRIAnswer: function(question, cb) {
+  _getSIRIAnswer: function(question, cb) {
     var self = this;
     // the data from server
     // var response = this.recommendAnswer;
@@ -127,37 +129,37 @@ NetConnector.prototype = {
               case 'help':
               formated_contents.push({
                 style: self.answerStyle.ASK_HINT,
-                data: content.data.body
+                content: content.data.body
               });
               break;
             case 'hot':
               formated_contents.push({
                 style: self.answerStyle.STOCK_HOT,
-                data: content.data.body
+                content: content.data.body
               })
               break;
             case 'forecast':
               formated_contents.push({
                 style: self.answerStyle.STOCK_FORECAST,
-                data: content.data.body
+                content: content.data.body
               })
               break;
             case 'plain':
               formated_contents.push({
                 style: self.answerStyle.PLAIN_TEXT,
-                data: content.data.body
+                content: content.data.body
               });
               break;
             case 'quotation':
               formated_contents.push({
                 style: self.answerStyle.STOCK_QUOTATION,
-                data: self._formatStockQuotation(content.data)
+                content: self._formatStockQuotation(content.data)
               });
               break;
             case 'optimization':
               formated_contents.push({
                 style: self.answerStyle.HOT_STOCKS,
-                data: content.data.body
+                content: content.data.body
               });
               break;
           }
