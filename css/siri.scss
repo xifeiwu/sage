@@ -263,48 +263,28 @@ a {
   line-height: 1.2
 }
 
-#siri_ask_hint .content .hint_list .is_red {
-  color: #fd7736;
-  font-weight: 700
-}
-
-#siri_ask_hint .content .hint_list .active {
-  color: rgba(89,89,89,.4)
-}
-
-#siri_ask_hint .content .hint_list li:nth-last-child(1) {
-  margin-bottom: 0
-}
-
 #siri_ask_hint .content .move_up li:nth-child(1) {
   -webkit-animation-delay: .3s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(2) {
   -webkit-animation-delay: .4s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(3) {
   -webkit-animation-delay: .5s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(4) {
   -webkit-animation-delay: .6s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(5),
 #siri_ask_hint .content .move_up li:nth-child(6) {
   -webkit-animation-delay: .7s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(7) {
   -webkit-animation-delay: .8s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(8) {
   -webkit-animation-delay: .9s
 }
-
 #siri_ask_hint .content .move_up li:nth-child(9) {
   -webkit-animation-delay: 1s
 }

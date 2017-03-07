@@ -69,23 +69,23 @@
         var answerDom = getAskHintDOM(resData);
         this.askHint.html('');
         this.askHint.append($(answerDom));
-        try {
-          this.mySwiper = new Swiper(".swiper-container", {
-            autoplay: 3000,
-            speed: 800,
-            loop: true,
-            onlyExternal: !0,
-            onDestroy: function(e) {},
-            autoplayDisableOnInteraction: !1,
-            effect: "fade",
-            fade: {
-              crossFade: !0
-            },
-            direction: "horizontal"
-          })
-        } catch (p) {
-          $.mobileConsole(p)
-        }
+        // try {
+        //   this.mySwiper = new Swiper(".swiper-container", {
+        //     autoplay: 3000,
+        //     speed: 800,
+        //     loop: true,
+        //     onlyExternal: !0,
+        //     onDestroy: function(e) {},
+        //     autoplayDisableOnInteraction: !1,
+        //     effect: "fade",
+        //     fade: {
+        //       crossFade: !0
+        //     },
+        //     direction: "horizontal"
+        //   })
+        // } catch (p) {
+        //   $.mobileConsole(p)
+        // }
       }.bind(this));
     },
     initEvent: function() {

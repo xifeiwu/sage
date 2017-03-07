@@ -25,6 +25,25 @@ NetConnector.prototype = {
     return host + path + (token ? '&token=' + token : '');
   },
 
+  // 函数节流, 避免同一个接口短时间内被重复调用
+  throttle: function(method, paramsObj) {
+    if (typeof(method) !== 'function') {
+      return;
+    }
+    clearTimeout(method.timeoutId);
+    method.timeoutId = setTimeout(function() {
+      try {
+        if (typeof(paramsObj) === 'object') {
+          method.call(null, paramsObj);
+        } else {
+          method.call(null);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }, 300);
+  },
+
   askServer: function(options, cb) {
     var type = options.type;
     var question = options.question;
@@ -35,9 +54,13 @@ NetConnector.prototype = {
       case 'ASK':
       default:
         this._getSIRIAnswer(question, cb);
+        // this.throttle(function() {
+        //   this._getSIRIAnswer(question, cb);
+        // }.bind(this));
         break;
     }
   },
+
   // getAskHint: function(cb) {
   //   var self = this;
   //   var token = localStorage.token;
