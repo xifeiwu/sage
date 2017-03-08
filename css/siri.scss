@@ -196,10 +196,13 @@ a {
       height: 30px;
       padding: 0;
       border: 1px solid #eee;
-      line-height: 30px;
+      line-height: 24px;
       text-indent: 5px;
       font-size: 14px;
-      color: #444
+      color: #444;
+      &:focus {
+        border-color: #457AEE;
+      }
     }
     .btn_go {
       float: right;

@@ -61,33 +61,6 @@ NetConnector.prototype = {
     }
   },
 
-  // getAskHint: function(cb) {
-  //   var self = this;
-  //   var token = localStorage.token;
-  //   var url = this.getURL('recommend');
-  //   $.output(url);
-  //   $.ajax({
-  //     url : url,
-  //     type : "get",
-  //     contentType : "application/json;charset=utf-8",
-  //     dataType : "json",
-  //     success : function(response) {
-  //       $.output(response);
-  //       if (response.code == 0) {
-  //         if (response.token) {
-  //           self.setToken(response.token);
-  //         }
-  //         var content = response.content;
-  //         if (content[0].type === 'recommend') {
-  //           cb(null, content[0]);
-  //         }
-  //       }
-  //     },
-  //     error : function(mXMLHttpRequest, mTextStatus, mErrorThrown) {
-  //       cb(JSON.stringify(mXMLHttpRequest));
-  //     }
-  //   });
-  // },
   _getSIRIAnswer: function(question, cb) {
     var self = this;
     // the data from server
@@ -185,7 +158,7 @@ NetConnector.prototype = {
         pchg = '+' + pchg.toFixed(2) + '%';
         pchg_state = 'up';
       } else if (pchg < 0) {
-        pchg = '-' + pchg.toFixed(2) + '%';
+        pchg = pchg.toFixed(2) + '%';
         pchg_state = 'down';
       } else {
         pchg = pchg.toFixed(2) + '%';
@@ -358,72 +331,5 @@ NetConnector.prototype = {
         }
       }]
     };
-  },
-  createAnswer: function(e) {
-    var t = $("#" + e.cardName).find(".answer_row .ans_cont").eq(1),
-      s = "";
-    if (t.addClass("temp_unvisible"), 1 == e.type)
-      if (0 == this.sessionStatus) {
-        var i = JSON.parse(e.data.SceneResult).sContent;
-        t.html('<div class="ans_box">' + i + "</div>"), this.hideLoading(e), this.reSetDomStructure(e)
-      } else {
-        var a = {
-          cardName: e.cardName,
-          url: "/InvestAdvise/" + this.cardData[e.cardName].UrlKey + ".html?dt_from=" + this.from
-        };
-        if (this.sMultiCondition && (this.oldSMultiCondition = this.sMultiCondition), 1 == this.sessionStatus && "cardMoneyFlow" != this.cardData[e.cardName].UrlKey) {
-          for (var r = 0; r < this.shareWords.length; r++) s += 0 == r ? this.shareWords[r] : "+" + this.shareWords[r];
-          s += "+" + e.words, a.url = "/InvestAdvise/cardMoneyFlow.html?dt_from=" + this.from + "&words=" + encodeURIComponent(s) + "&returnPre=1"
-        }
-        var o = this.createIframe(a);
-        $(o).appendTo(t)
-      }
-    else if (0 == e.type) {
-      if ("" == this.cardData[e.cardName].UrlKey) return t.html('<div class="ans_box">这个问题表哥有点处理不过来，请稍后再试</div>'), this.reSetDomStructure(e), void this.hideLoading(e);
-      var a = {
-        cardName: e.cardName,
-        url: "/InvestAdvise/" + this.cardData[e.cardName].UrlKey + ".html?dt_from=" + this.from
-      };
-      if ("cardMoneyFlow" == this.cardData[e.cardName].UrlKey) {
-        var n = JSON.parse(e.data.SceneResult).vIAPickStock;
-        if (0 == JSON.parse(e.data.SceneResult).iIsShowMultiCondCard && 1 == window.parent.intelligentAnswer.sessionStatus && (n = []), 0 == n.length) {
-          for (var r = 0; r < this.shareWords.length; r++) s += 0 == r ? this.shareWords[r] : "+" + this.shareWords[r];
-          "" != s ? s += "+" + e.words : s = e.words, a.url = a.url + "&words=" + encodeURIComponent(s) + "&returnPre=1"
-        } else {
-          this.shareWords.push(e.words);
-          for (var r = 0; r < this.shareWords.length; r++) s += 0 == r ? this.shareWords[r] : "_" + this.shareWords[r];
-          a.url = a.url + "&words=" + encodeURIComponent(s) + "&returnPre=0"
-        }
-        this.sMultiCondition && (this.oldSMultiCondition = this.sMultiCondition), this.sMultiCondition = JSON.parse(e.data.SceneResult).sMultiCondition
-      }
-      if (1 == this.sessionStatus && "cardMoneyFlow" != this.cardData[e.cardName].UrlKey) {
-        this.sMultiCondition && (this.oldSMultiCondition = this.sMultiCondition);
-        for (var r = 0; r < this.shareWords.length; r++) s += 0 == r ? this.shareWords[r] : "+" + this.shareWords[r];
-        s += "+" + e.words, a.url = "/InvestAdvise/cardMoneyFlow.html?dt_from=" + this.from + "&words=" + encodeURIComponent(s) + "&returnPre=1"
-      }
-      var o = this.createIframe(a);
-      $(o).appendTo(t)
-    } else if (2 == e.type)
-      if (0 == this.sessionStatus) {
-        var d = JSON.parse(e.data.SceneResult);
-        d = $.extend(d, e);
-        var l = this;
-        this.countDownJump(function() {
-          l.reSetDomStructure(e)
-        }, function() {
-          l.reSetDomStructure(e)
-        }, d)
-      } else {
-        var a = {
-          cardName: e.cardName,
-          url: "/InvestAdvise/" + this.cardData[e.cardName].UrlKey + ".html?dt_from=" + this.from
-        };
-        if (this.sMultiCondition && (this.oldSMultiCondition = this.sMultiCondition), 1 == this.sessionStatus && "cardMoneyFlow" != this.cardData[e.cardName].UrlKey) {
-          for (var r = 0; r < this.shareWords.length; r++) s += 0 == r ? this.shareWords[r] : "+" + this.shareWords[r];
-          s += "+" + e.words, a.url = "/InvestAdvise/cardMoneyFlow.html?dt_from=" + this.from + "&words=" + encodeURIComponent(s) + "&returnPre=1"
-        }
-        var o = this.createIframe(a);
-        $(o).appendTo(t)
-      }
   },
 }

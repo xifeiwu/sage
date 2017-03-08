@@ -190,6 +190,11 @@ iframe {
   border: 0;
 }
 
+input[type="text"] {
+  -webkit-appearance: none;
+  outline: none;
+}
+
 @mixin flex_justify_content() {
   display: flex;
   display: -webkit-box;
