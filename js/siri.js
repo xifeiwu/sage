@@ -2,7 +2,7 @@
   var SIRIAskHint = function(container) {
     console.log(container);
     this.container = container;
-    this.askHint = $('#siri_ask_hint');
+    this.askHintDOM = $('#siri_ask_hint');
     this.init();
   }
   SIRIAskHint.prototype = {
@@ -12,12 +12,12 @@
     },
     show: function(showMe) {
       if (showMe) {
-        this.askHint.removeClass('hidden');
-        this.askHint.addClass('show');
+        this.askHintDOM.removeClass('hidden');
+        this.askHintDOM.addClass('show');
         this.mySwiper.startSlide && this.mySwiper.startSlide();
       } else {
-        this.askHint.removeClass('show');
-        this.askHint.addClass('hidden');
+        this.askHintDOM.removeClass('show');
+        this.askHintDOM.addClass('hidden');
         this.mySwiper.stopSlide && this.mySwiper.stopSlide();
       }
     },
@@ -68,15 +68,15 @@
           localStorage.ASK_HINT = JSON.stringify(resData);
         }
         var answerDom = getAskHintDOM(resData);
-        this.askHint.html('');
-        this.askHint.append($(answerDom));
+        this.askHintDOM.html('');
+        this.askHintDOM.append($(answerDom));
         this.mySwiper = this.addSwiper();
-        this.askHint.addClass('hidden');
+        this.askHintDOM.addClass('hidden');
       }.bind(this));
     },
     addSwiper: function() {
       var swiper = {};
-      var swiperWrapper = this.askHint.find('.swiper-wrapper').eq(0);
+      var swiperWrapper = this.askHintDOM.find('.swiper-wrapper').eq(0);
       var swiperSlides = swiperWrapper.find('.swiper-slide');
       var slideWidth = swiperWrapper.width();
       for (var i = 0; i < swiperSlides.length; i++) {
@@ -122,14 +122,14 @@
       return swiper;
     },
     initEvent: function() {
-      $.touchEvent(this.askHint, '.hint_list li', function(evt) {
+      $.touchEvent(this.askHintDOM, '.hint_list li', function(evt) {
         this.container.askSIRI(evt.target.textContent)
         this.show(false);
       }.bind(this));
-      $.touchEvent(this.askHint, '.btn_change_wrapper .btn_change', function() {
+      $.touchEvent(this.askHintDOM, '.btn_change_wrapper .btn_change', function() {
         this.mySwiper.slideNextManually && this.mySwiper.slideNextManually();
       }.bind(this));
-      $.touchEvent(this.askHint, '.btn_close_wrapper .btn_close', function() {
+      $.touchEvent(this.askHintDOM, '.btn_close_wrapper .btn_close', function() {
         this.show(false);
       }.bind(this));
     }
