@@ -14,9 +14,11 @@
       if (showMe) {
         this.askHint.removeClass('hidden');
         this.askHint.addClass('show');
+        this.mySwiper.startSlide && this.mySwiper.startSlide();
       } else {
         this.askHint.removeClass('show');
         this.askHint.addClass('hidden');
+        this.mySwiper.stopSlide && this.mySwiper.stopSlide();
       }
     },
     initDOM: function() {
@@ -69,10 +71,11 @@
         this.askHint.html('');
         this.askHint.append($(answerDom));
         this.mySwiper = this.addSwiper();
+        this.askHint.addClass('hidden');
       }.bind(this));
     },
     addSwiper: function() {
-      var mySwiper = {};
+      var swiper = {};
       var swiperWrapper = this.askHint.find('.swiper-wrapper').eq(0);
       var swiperSlides = swiperWrapper.find('.swiper-slide');
       var slideWidth = swiperWrapper.width();
@@ -82,21 +85,41 @@
         slide.css({
           'transform': 'translate3d(' + slideWidth * i * -1 +'px, 0px, 0px)'
         });
+        slide.removeClass('swiper-slide-active');
       }
 
       if (swiperSlides.length > 0) {
-        mySwiper.activeId = 0;
-        mySwiper.slideNext = function() {
-          var activeSlide = swiperSlides[mySwiper.activeId];
-          var nextId = (mySwiper.activeId + 1) % swiperSlides.length;
+        swiper.activeId = 0;
+        swiper.swiperSlides = swiperSlides;
+        swiper.slideNext = function() {
+          var activeSlide = swiperSlides[swiper.activeId];
+          var nextId = (swiper.activeId + 1) % swiperSlides.length;
+          console.log(nextId);
           activeSlide.classList.remove('swiper-slide-active');
           swiperSlides[nextId].classList.add('swiper-slide-active');
-          mySwiper.activeId = nextId;
+          swiper.activeId = nextId;
         };
-        swiperSlides[0].classList.add('swiper-slide-active');
-        mySwiper.interVal = setInterval(mySwiper.slideNext, 3000);
+        swiper.slideNextManually = function() {
+          swiper.interVal && clearInterval(swiper.interVal);
+          swiper.slideNext();
+          swiper.startSlide();
+        };
+        swiper.startSlide = function() {
+          swiper.stopSlide();
+          swiperSlides[swiper.activeId].classList.add('swiper-slide-active');
+          // setTimeout(function() {
+          swiper.interVal = setInterval(swiper.slideNext, 3000);
+          // }, 3500);
+        }
+        swiper.stopSlide = function() {
+          swiper.interVal && clearInterval(swiper.interVal);
+          Array.prototype.slice.call(swiper.swiperSlides).forEach(function(it) {
+            it.classList.remove('swiper-slide-active');
+          })
+        }
+        // swiper.startSlide();
       }
-      return mySwiper;
+      return swiper;
     },
     initEvent: function() {
       $.touchEvent(this.askHint, '.hint_list li', function(evt) {
@@ -104,7 +127,7 @@
         this.show(false);
       }.bind(this));
       $.touchEvent(this.askHint, '.btn_change_wrapper .btn_change', function() {
-        this.mySwiper.slideNext();
+        this.mySwiper.slideNextManually && this.mySwiper.slideNextManually();
       }.bind(this));
       $.touchEvent(this.askHint, '.btn_close_wrapper .btn_close', function() {
         this.show(false);
