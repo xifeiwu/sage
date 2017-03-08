@@ -40,11 +40,10 @@
     '<div class="swiper-wrapper ">' + ulstr +
    '</div>' +
   '</div>' +
-  '<div class="btn_change_slider" id="btnChange">' +
-    '<div class="btn_change_inside">' +
-      '<span>换一换</span></div>' +
+  '<div class="btn_change_wrapper">' +
+      '<span class="btn_change">换一换</span>' +
   '</div>' +
-  '<div class="close"><div class="btn"></div></div>' +
+  '<div class="btn_close_wrapper"><span class="btn_close"></span></div>' +
 '</div>';
         return answerDom;
       }
@@ -69,34 +68,45 @@
         var answerDom = getAskHintDOM(resData);
         this.askHint.html('');
         this.askHint.append($(answerDom));
-        // try {
-        //   this.mySwiper = new Swiper(".swiper-container", {
-        //     autoplay: 3000,
-        //     speed: 800,
-        //     loop: true,
-        //     onlyExternal: !0,
-        //     onDestroy: function(e) {},
-        //     autoplayDisableOnInteraction: !1,
-        //     effect: "fade",
-        //     fade: {
-        //       crossFade: !0
-        //     },
-        //     direction: "horizontal"
-        //   })
-        // } catch (p) {
-        //   $.mobileConsole(p)
-        // }
+        this.mySwiper = this.addSwiper();
       }.bind(this));
+    },
+    addSwiper: function() {
+      var mySwiper = {};
+      var swiperWrapper = this.askHint.find('.swiper-wrapper').eq(0);
+      var swiperSlides = swiperWrapper.find('.swiper-slide');
+      var slideWidth = swiperWrapper.width();
+      for (var i = 0; i < swiperSlides.length; i++) {
+        var slide = $(swiperSlides[i]);
+        slide.data('swiperSlideIndex', i);
+        slide.css({
+          'transform': 'translate3d(' + slideWidth * i * -1 +'px, 0px, 0px)'
+        });
+      }
+
+      if (swiperSlides.length > 0) {
+        mySwiper.activeId = 0;
+        mySwiper.slideNext = function() {
+          var activeSlide = swiperSlides[mySwiper.activeId];
+          var nextId = (mySwiper.activeId + 1) % swiperSlides.length;
+          activeSlide.classList.remove('swiper-slide-active');
+          swiperSlides[nextId].classList.add('swiper-slide-active');
+          mySwiper.activeId = nextId;
+        };
+        swiperSlides[0].classList.add('swiper-slide-active');
+        mySwiper.interVal = setInterval(mySwiper.slideNext, 3000);
+      }
+      return mySwiper;
     },
     initEvent: function() {
       $.touchEvent(this.askHint, '.hint_list li', function(evt) {
         this.container.askSIRI(evt.target.textContent)
         this.show(false);
       }.bind(this));
-      $.touchEvent(this.askHint, '#btnChange .btn_change_inside', function() {
-        this.mySwiper.slideNext()
+      $.touchEvent(this.askHint, '.btn_change_wrapper .btn_change', function() {
+        this.mySwiper.slideNext();
       }.bind(this));
-      $.touchEvent(this.askHint, '.close', function() {
+      $.touchEvent(this.askHint, '.btn_close_wrapper .btn_close', function() {
         this.show(false);
       }.bind(this));
     }
