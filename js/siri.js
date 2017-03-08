@@ -107,9 +107,7 @@
         swiper.startSlide = function() {
           swiper.stopSlide();
           swiperSlides[swiper.activeId].classList.add('swiper-slide-active');
-          // setTimeout(function() {
           swiper.interVal = setInterval(swiper.slideNext, 3000);
-          // }, 3500);
         }
         swiper.stopSlide = function() {
           swiper.interVal && clearInterval(swiper.interVal);
@@ -117,13 +115,14 @@
             it.classList.remove('swiper-slide-active');
           })
         }
-        // swiper.startSlide();
       }
       return swiper;
     },
     initEvent: function() {
-      $.touchEvent(this.askHintDOM, '.hint_list li', function(evt) {
-        this.container.askSIRI(evt.target.textContent)
+      $.touchEvent(this.askHintDOM, '.swiper-slide-active .hint_list li', function(evt) {
+        var question = evt.target.textContent;
+        $.output(question);
+        this.container.askSIRI(question);
         this.show(false);
       }.bind(this));
       $.touchEvent(this.askHintDOM, '.btn_change_wrapper .btn_change', function() {
