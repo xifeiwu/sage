@@ -50,6 +50,7 @@ a {
 #main {
   height: 100%;
   font-size: 16px;
+  position: relative;
   #dialog_wrapper {
     height: calc(100% - 51px);
     overflow-y: scroll;
@@ -181,9 +182,9 @@ a {
   }
 
   #input_bar {
-    position: fixed;
-    left: 0;
-    bottom: 0;
+    // position: absolute;
+    // left: 0;
+    // bottom: 0;
     width: 100%;
     height: 51px;
     background-color: #f8f8f8;

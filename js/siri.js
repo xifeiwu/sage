@@ -190,19 +190,19 @@
           this.askSIRI(question);
         }
       }.bind(this));
-      // $('#dialog').on('tap', function(evt) {
-      //   console.log(evt);
-      // })
+      $('#input_bar input[type="text"]').on('focus', function(evt) {
+        var target = evt.target;
+        setTimeout(function() {
+          target.scrollIntoView(true);
+          // window.location.hash = '';
+          // window.location.hash = 'input_bar';
+        }, 250);
+      });
+      $('#input_bar input[type="text"]').on('blur', function(evt) {
+        window.location.hash = '';
+      });
       // $(window).focus(function() {
         // $.isIOS() && e.mySwiper.animating && (e.mySwiper.animating = !1, e.mySwiper.stopAutoplay(), e.mySwiper.startAutoplay())
-      // });
-
-      // $.touchEvent($("#dailog"), ".answer_row a", function() {
-      //   var t = $(this).attr("data-href");
-      //   if (null != t) {
-      //     var s = e.jumpUrlDeal(t);
-      //     location.href = s
-      //   }
       // });
     },
     siriSay: function(content) {
@@ -217,7 +217,7 @@
         }, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
-              type: this.answerStyle.PLAIN_TEXT,
+              style: this.answerStyle.PLAIN_TEXT,
               content: '您好，我是哲，私人理财专家，有关股票证券问题都可以问我。'
             }];
           }

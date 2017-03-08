@@ -205,7 +205,7 @@ NetConnector.prototype = {
       pchg = '+' + pchg.toFixed(2) + '%';
       pchg_state = 'up';
     } else if (pchg < 0) {
-      pchg = '-' + pchg.toFixed(2) + '%';
+      pchg = pchg.toFixed(2) + '%';
       pchg_state = 'down';
     } else {
       pchg = pchg.toFixed(2) + '%';
