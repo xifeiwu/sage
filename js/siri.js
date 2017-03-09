@@ -225,13 +225,7 @@
             type: this.cardStyle.SIRI_SAY,
             content: formated_contents,
           });
-          this.bottomDiv({
-            cardName: this.cardName
-          });
-          this.scrollTopAnimate({
-            cardName: this.cardName,
-            callBack: function() {}
-          });
+          this.scrollAnimate();
         }.bind(this));
 
       }
@@ -261,13 +255,7 @@
             return this.createAnswerDOM(it);
           }.bind(this)).join('');
           cardNode.append($(answerDOM));
-          this.bottomDiv({
-            cardName: this.cardName
-          });
-          this.scrollTopAnimate({
-            cardName: this.cardName,
-            callBack: function() {}
-          });
+          this.scrollAnimate()
         }.bind(this));
       }
     },
@@ -443,9 +431,27 @@
         $(s.contentWindow.document.body).width(a + "px"), $(s).attr("height", i), $(s).attr("width", a), this.bottomDiv(e)
       }
     },
+    scrollAnimate: function() {
+      var scrollTop = true;
+      if (scrollTop) {
+        this.bottomDiv();
+        this.scrollTopAnimate();
+      } else {
+        this.scrollBottomAnimate();
+      }
+    },
+    bottomDiv: function() {
+      var curCard = $('#' + this.cardName);
+      var cardHeight = curCard.height();
+      var bootomHeight = this.wrapperHeight - cardHeight
+      if ((this.wrapperHeight - cardHeight) > 0) {
+        bootomHeight = this.wrapperHeight - cardHeight;
+      } else {
+        bootomHeight = 0;
+      }
+      $('#bottomDiv').css('height', bootomHeight);
+    },
     scrollTopAnimate: function(e) {
-      this.scrollBottomAnimate();
-      return;
       var self = this;
       var goOn = true,
         timeUsed = 300,
@@ -509,19 +515,6 @@
         }
       };
       scrollFunc();
-    },
-    bottomDiv: function() {
-      $('#bottomDiv').css('height', 0);
-      return;
-      var curCard = $('#' + this.cardName);
-      var cardHeight = curCard.height();
-      var bootomHeight = this.wrapperHeight - cardHeight
-      if ((this.wrapperHeight - cardHeight) > 0) {
-        bootomHeight = this.wrapperHeight - cardHeight;
-      } else {
-        bootomHeight = 0;
-      }
-      $('#bottomDiv').css('height', bootomHeight);
     },
     openUrl: function(e) {
       location.href = e.url
