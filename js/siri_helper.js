@@ -1,5 +1,5 @@
 var NetConnector = function() {
-  this.profile = 'uat';
+  this.profile = 'product';
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,

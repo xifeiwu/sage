@@ -76,7 +76,6 @@
       switch (profile) {
         case 'uat_ip':
           host = 'http://10.19.93.129:8090/';
-          // host = 'http://106.75.16.60:8090/'
           break;
         case 'uat':
           host =  'http://mtest.iqianjin.com/';
