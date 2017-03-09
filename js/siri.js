@@ -432,7 +432,7 @@
       }
     },
     scrollAnimate: function() {
-      var scrollTop = true;
+      var scrollTop = false;
       if (scrollTop) {
         this.bottomDiv();
         this.scrollTopAnimate();
