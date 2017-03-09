@@ -52,6 +52,7 @@ a {
   font-size: 16px;
   position: relative;
   #dialog_wrapper {
+    position: relative;
     height: calc(100% - 51px);
     overflow-y: scroll;
     color: #595959;

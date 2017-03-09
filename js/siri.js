@@ -444,24 +444,25 @@
       }
     },
     scrollTopAnimate: function(e) {
+      this.scrollBottomAnimate();
+      return;
       var self = this;
       var goOn = true,
         timeUsed = 300,
         cardTop = document.getElementById(this.cardName).offsetTop,
         wrapperTop = this.dialogWrapper.scrollTop,
-        iterval = 40,
-        step = (cardTop - wrapperTop) / timeUsed * iterval;
-      v = function() {
+        interval = 40,
+        step = (cardTop - wrapperTop) / timeUsed * interval;
+      var scrollFunc = function() {
         if (Math.abs(wrapperTop - cardTop) > step) {
           if (goOn) {
             wrapperTop += step;
             self.dialogWrapper.scrollTop = wrapperTop;
-            window.setTimeout(v, iterval);
+            window.setTimeout(scrollFunc, interval);
           } else {
             wrapperTop = cardTop;
             goOn = false;
             self.dialogWrapper.scrollTop = wrapperTop;
-            e.callBack();
           } 
         } else {
           wrapperTop = cardTop;
@@ -469,12 +470,49 @@
           goOn = false;
         }
       };
-      v();
+      scrollFunc();
       setTimeout(function() {
         goOn = false;
       }, timeUsed + 200);
     },
-    bottomDiv: function(e) {
+    scrollBottomAnimate: function() {
+      var self = this;
+      var timeUsed = 300;
+      var  interval = 40;
+      var cardDOM = document.getElementById(this.cardName);
+      var cardTop = cardDOM.offsetTop;
+      var cardBottom = cardTop + cardDOM.clientHeight;
+      var wrapperTop = this.dialogWrapper.scrollTop;
+      var bottomDivHeight = 0;
+      var wrapperBottom = wrapperTop + this.wrapperHeight - bottomDivHeight;
+      if (wrapperBottom > cardBottom) {
+        return;
+      }
+      var goOn = true;
+      var step = (cardBottom - wrapperBottom) / timeUsed * interval;
+      var scrollFunc = function() {
+        if (Math.abs(cardBottom - wrapperBottom) > step) {
+          if (goOn) {
+            wrapperTop += step;
+            self.dialogWrapper.scrollTop = wrapperTop;
+            wrapperBottom += step;
+            window.setTimeout(scrollFunc, interval);
+          } else {
+            wrapperTop = wrapperTop + cardBottom - wrapperBottom;
+            goOn = false;
+            self.dialogWrapper.scrollTop = wrapperTop;
+          }
+        } else {
+          wrapperTop = wrapperTop + cardBottom - wrapperBottom;
+          self.dialogWrapper.scrollTop = wrapperTop;
+          goOn = false;
+        }
+      };
+      scrollFunc();
+    },
+    bottomDiv: function() {
+      $('#bottomDiv').css('height', 0);
+      return;
       var curCard = $('#' + this.cardName);
       var cardHeight = curCard.height();
       var bootomHeight = this.wrapperHeight - cardHeight
