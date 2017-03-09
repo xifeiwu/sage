@@ -79,7 +79,10 @@
           // host = 'http://106.75.16.60:8090/'
           break;
         case 'uat':
-          host =  'http://mtest.iqianjin.com/'
+          host =  'http://mtest.iqianjin.com/';
+          break;
+        case 'product':
+          host = 'https://m.benew.com.cn/';
           break;
       }
       return host;
@@ -102,7 +105,9 @@
       console.log(msg);
     },
     output: function(msg) {
-      console.log(msg);
+      if (false) {
+        console.log(msg);
+      }
     },
     toLocaleFormat: function(date, fmt) {
       var o = {
