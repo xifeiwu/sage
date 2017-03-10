@@ -121,7 +121,7 @@ a {
               &#stock_quotation {
                 position: relative;
                 max-width: 100%;
-                padding: 0px;
+                padding: 8px;
               }
               &#hot_stocks {
                 width: 100%;
@@ -464,12 +464,11 @@ a {
     }
   }
   .footer {
-    border-top: 1px solid #d4d7dc;
     .active_link {
       display: inline-block;
       width: 48%;
-      height: 30px;
-      line-height: 30px;
+      height: 25px;
+      line-height: 25px;
       text-align: center;
       font-size: 16px;
       color: #595959;
