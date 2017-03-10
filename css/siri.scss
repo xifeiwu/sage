@@ -424,7 +424,7 @@ a {
     @include flex_justify_content();
     .first {
       box-sizing: content-box;
-      min-width: 100px;
+      min-width: 120px;
       &.up {
         color: #FF5871;
       }
@@ -437,6 +437,7 @@ a {
       .trade_price {
         font-size: 36px;
         line-height: 45px;
+        text-align: center;
       }
       .price_change {
         @include flex_justify_content();

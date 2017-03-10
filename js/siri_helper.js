@@ -213,6 +213,15 @@ NetConnector.prototype = {
     }
     body.formated_pchg = pchg;
     body.pchg_state = pchg_state;
+    var change = body.change;
+    if (change > 0) {
+      change = '+' + change;
+    }
+    body.change = change;
+    body.thigh = body.thigh.toFixed(2);
+    body.topen = body.topen.toFixed(2);
+    body.tlow = body.tlow.toFixed(2);
+    body.lclose = body.lclose.toFixed(2);
     var links = [];
     predictLinks.forEach(function(it) {
       links.push(it.text);

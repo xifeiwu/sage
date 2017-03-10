@@ -292,7 +292,7 @@
           '<div class="ans_box" id="stock_quotation">' +
             '<div class="header">' +
               '<div class="title">' + content.tradeName + '&nbsp' + content.tradeCode + '</div>' +
-              '<div class="status">' + content.stockStatus + '&nbsp' + content.tradeDate + '&nbsp' + content.tradeTime + '</div>' +
+              '<div class="status">' + content.stockStatus + '&nbsp&nbsp' + content.tradeDate + '&nbsp&nbsp' + content.tradeTime + '</div>' +
             '</div>' +
            ' <div class="content">' +
               '<div class="first item ' + content.pchg_state +'">' +
