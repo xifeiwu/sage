@@ -71,21 +71,6 @@
         }
       }
     },
-    getAjaxHost: function(profile) {
-      var host = null;
-      switch (profile) {
-        case 'uat_ip':
-          host = 'http://10.19.93.129:8090/';
-          break;
-        case 'uat':
-          host =  'http://mtest.iqianjin.com/';
-          break;
-        case 'product':
-          host = 'https://m.benew.com.cn/';
-          break;
-      }
-      return host;
-    },
     getVersion: function() {
       var t = "",
         n = e.Deferred();

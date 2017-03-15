@@ -140,8 +140,6 @@
     this.env = $.getQueryString("env");
     this.cardCnt = 1;
     this.cardName = "card_1";
-    this.sessionAjaxCount = 0;
-    this.sessionStatus = 0;
     this.dialogWrapper = document.getElementById('dialog_wrapper');
     this.wrapperHeight = $(this.dialogWrapper).height();
     this.cardStyle = {
@@ -157,6 +155,7 @@
       this.siriAskHint = new SIRIAskHint(this);
       this.addEvent();
       this.siriSay('hi');
+      this.startHeartBeat();
     },
     addEvent: function() {
       $("#input_bar .btn_go").on("click", function() {
@@ -201,9 +200,17 @@
       $('#input_bar input[type="text"]').on('blur', function(evt) {
         window.location.hash = '';
       });
-      // $(window).focus(function() {
-        // $.isIOS() && e.mySwiper.animating && (e.mySwiper.animating = !1, e.mySwiper.stopAutoplay(), e.mySwiper.startAutoplay())
-      // });
+    },
+    startHeartBeat: function() {
+      var stockQuotation = 0;
+      self.heartBeatInterval = setInterval(function() {
+        stockQuotation += 1;
+        if (stockQuotation > 6) {
+          Array.prototype.slice.call(document.querySelectorAll('#stock_quotation')).forEach(function(it) {
+            console.log(it);
+          })
+        }
+      }, 1000);
     },
     siriSay: function(content) {
       if (!content || content.length == 0) {
@@ -227,7 +234,6 @@
           });
           this.scrollAnimate();
         }.bind(this));
-
       }
     },
     askSIRI: function(question) {
@@ -296,7 +302,9 @@
             '</div>' +
            ' <div class="content">' +
               '<div class="first item ' + content.pchg_state +'">' +
-                '<div class="trade_price">' + content.tradePrice + '</div>' +
+                '<div class="trade_price_container">' +
+                  '<div class="trade_price"><span class="pre">' + content.tradePrice + '</span><span class="now">3.56</span></div>' +
+                '</div>' +
                 '<div class="price_change">' +
                   '<div class="change">' + content.change + '</div>' +
                   '<div class="pchg">' + content.formated_pchg + '</div>' +
@@ -351,7 +359,7 @@
     },
 
     limitCardNumb: function() {
-      var e = 10,
+      var e = 16,
         t = $(".card");
       if (t.length > e) {
         for (var s = 0, i = t.length - e; s < i; s++) {
@@ -406,30 +414,6 @@
     },
     hideLoading: function() {
       $('.answer_row .ans_cont .ans_box .dots_loading').closest('.answer_row').remove();
-    },
-    createIframe: function(e) {
-      var t = e.url,
-        s = $(window).width() - 50 - 26,
-        i = document.createElement("iframe");
-      return i.name = e.cardName, i.setAttribute("style", "visibility:hidden;overflow: hidden;"), i.setAttribute("width", s), i.setAttribute("border", "none"), i.setAttribute("frameborder", "no"), i.setAttribute("src", t), i.onerror = function() {}, i
-    },
-    showIframe: function(e) {
-      var t = $(window).width() - 50 - 26,
-        s = document.getElementsByName(e.cardName)[0];
-      $(s.contentWindow.document.body).width(t + "px");
-      var i = this;
-      setTimeout(function() {
-        i.updateIframe(e), $(s).attr("style", "visibility：visible;overflow: hidden;")
-      }, 10)
-    },
-    updateIframe: function(e) {
-      var t = e.cardName;
-      if (document.getElementsByName(t).length > 0) {
-        var s = document.getElementsByName(t)[0],
-          i = $(s.contentWindow.document.body)[0].offsetHeight + 12,
-          a = $(window).width() - 50 - 26;
-        $(s.contentWindow.document.body).width(a + "px"), $(s).attr("height", i), $(s).attr("width", a), this.bottomDiv(e)
-      }
     },
     scrollAnimate: function() {
       var scrollTop = false;
@@ -518,6 +502,30 @@
     },
     openUrl: function(e) {
       location.href = e.url
+    },
+    createIframe: function(e) {
+      var t = e.url,
+        s = $(window).width() - 50 - 26,
+        i = document.createElement("iframe");
+      return i.name = e.cardName, i.setAttribute("style", "visibility:hidden;overflow: hidden;"), i.setAttribute("width", s), i.setAttribute("border", "none"), i.setAttribute("frameborder", "no"), i.setAttribute("src", t), i.onerror = function() {}, i
+    },
+    showIframe: function(e) {
+      var t = $(window).width() - 50 - 26,
+        s = document.getElementsByName(e.cardName)[0];
+      $(s.contentWindow.document.body).width(t + "px");
+      var i = this;
+      setTimeout(function() {
+        i.updateIframe(e), $(s).attr("style", "visibility：visible;overflow: hidden;")
+      }, 10)
+    },
+    updateIframe: function(e) {
+      var t = e.cardName;
+      if (document.getElementsByName(t).length > 0) {
+        var s = document.getElementsByName(t)[0],
+          i = $(s.contentWindow.document.body)[0].offsetHeight + 12,
+          a = $(window).width() - 50 - 26;
+        $(s.contentWindow.document.body).width(a + "px"), $(s).attr("height", i), $(s).attr("width", a), this.bottomDiv(e)
+      }
     },
   };
   benewSIRI = new BenewSIRI();

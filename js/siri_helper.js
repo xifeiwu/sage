@@ -1,5 +1,5 @@
 var NetConnector = function() {
-  this.profile = 'product';
+  this.profile = 'uat_ip';
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,
@@ -18,8 +18,24 @@ NetConnector.prototype = {
     // }
   },
 
+  getAjaxHost: function(profile) {
+    var host = null;
+    switch (profile) {
+      case 'uat_ip':
+        host = 'http://10.19.93.129:8090/';
+        break;
+      case 'uat':
+        host =  'http://mtest.iqianjin.com/';
+        break;
+      case 'product':
+        host = 'https://m.benew.com.cn/';
+        break;
+    }
+    return host;
+  },
+
   getURL: function(question) {
-    var host = $.getAjaxHost(this.profile);
+    var host = this.getAjaxHost(this.profile);
     var path = 'bot/api/v1/botServer/sessionOperator/receiveh5?msg=' + question;
     var token = localStorage.token;
     return host + path + (token ? '&token=' + token : '');
