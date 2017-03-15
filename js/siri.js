@@ -200,17 +200,75 @@
       $('#input_bar input[type="text"]').on('blur', function(evt) {
         window.location.hash = '';
       });
+
+      // can not be triggered
+      // $('.ans_box .content .price .trade_price').on('transitionend webkitTransitionEnd oTransitionEnd', function(evt) {
+      //   console.log('transitionend');
+      // });
+    },
+    refreshStockQuotationInViewport: function() {
+      updateStockQuotationNode = function(node, item) {
+        var content = item.content;
+        var pchg_state = content.pchg_state;
+        var tradeTime = content.tradeTime;
+        var tradePrice = content.tradePrice;
+        var change = content.change;
+        var formated_pchg = content.formated_pchg;
+        console.log(pchg_state);
+        console.log(tradeTime);
+        console.log(tradePrice);
+        console.log(change);
+        console.log(formated_pchg);
+        var priceNode = node.querySelector('.content .price');
+        var tradeTimeNode = node.querySelector('.header .trade_time');
+        if (tradeTimeNode) {
+          tradeTimeNode.textContent = tradeTime;
+        }
+        ['up', 'down', 'stay'].forEach(function(it) {
+          priceNode.classList.remove(it);
+        });
+        priceNode.classList.add(pchg_state);
+        var tradePriceNode = priceNode.querySelector('.trade_price');
+        $(tradePriceNode).one('transitionend', function(evt) {
+          var target = evt.target;
+          target.classList.remove('move_up');
+          console.log('transitionend2');
+        })
+        tradePriceNode.querySelector('.now').textContent = tradePrice;
+        tradePriceNode.classList.add('move_up');
+      }
+      Array.prototype.slice.call(document.querySelectorAll('#stock_quotation')).forEach(function(quotationNode) {
+        if (!$.isElementNotInViewport(quotationNode)) {
+          if (!'code' in quotationNode.dataset) {
+            return;
+          }
+          var secode = quotationNode.dataset.code;
+          this.netConnector.askServer({
+            type: 'ASK',
+            question: secode
+          }, function(err, formated_contents) {
+            if (err) {
+              return;
+            }
+            formated_contents.forEach(function(formated_content) {
+              if (formated_content.style === this.answerStyle.STOCK_QUOTATION) {
+                updateStockQuotationNode(quotationNode, formated_content);
+              }
+            }.bind(this));
+          }.bind(this));
+        }
+      }.bind(this));
     },
     startHeartBeat: function() {
       var stockQuotation = 0;
+      $.output('start interval');
       self.heartBeatInterval = setInterval(function() {
         stockQuotation += 1;
         if (stockQuotation > 6) {
-          Array.prototype.slice.call(document.querySelectorAll('#stock_quotation')).forEach(function(it) {
-            console.log(it);
-          })
+          stockQuotation = 0;
+          this.refreshStockQuotationInViewport();
         }
-      }, 1000);
+      }.bind(this), 1000);
     },
     siriSay: function(content) {
       if (!content || content.length == 0) {
@@ -295,13 +353,13 @@
         case this.answerStyle.STOCK_QUOTATION:
           var content = options.content;
           answerDom = 
-          '<div class="ans_box" id="stock_quotation">' +
+          '<div class="ans_box" id="stock_quotation" data-code="' + content.tradeCode + '">' +
             '<div class="header">' +
               '<div class="title">' + content.tradeName + '&nbsp' + content.tradeCode + '</div>' +
-              '<div class="status">' + content.stockStatus + '&nbsp&nbsp' + content.tradeDate + '&nbsp&nbsp' + content.tradeTime + '</div>' +
+              '<div class="status">' + content.stockStatus + '&nbsp&nbsp' + content.tradeDate + '&nbsp&nbsp<span class="trade_time">' + content.tradeTime + '</span></div>' +
             '</div>' +
            ' <div class="content">' +
-              '<div class="first item ' + content.pchg_state +'">' +
+              '<div class="price item ' + content.pchg_state +'">' +
                 '<div class="trade_price_container">' +
                   '<div class="trade_price"><span class="pre">' + content.tradePrice + '</span><span class="now">3.56</span></div>' +
                 '</div>' +

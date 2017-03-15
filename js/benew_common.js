@@ -89,7 +89,7 @@
       console.log(msg);
     },
     output: function(msg) {
-      if (false) {
+      if (true) {
         console.log(msg);
       }
     },
@@ -112,6 +112,23 @@
         }
       }
       return fmt;
+    },
+    isElementNotInViewport: function(el) {
+      var isInViewport = true;
+      var rect = el.getBoundingClientRect();
+      if ((rect.top + rect.height) < 0) {
+        isInViewport = false;
+      }
+      if ((rect.bottom - rect.height) > document.body.clientHeight) {
+        isInViewport = false;
+      }
+      if ((rect.left + rect.width) < 0) {
+        isInViewport = false;
+      }
+      if ((rect.right - rect.width) > document.body.clientWidth) {
+        isInViewport = false;
+      }
+      return !isInViewport;
     },
     weixinSDKRegister: function(t) {
       if ("undefined" != typeof wx && ("web" == e.getQueryString("dt_from") || "nod" == e.getQueryString("dt_from"))) {
