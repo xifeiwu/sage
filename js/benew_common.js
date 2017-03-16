@@ -89,7 +89,7 @@
       console.log(msg);
     },
     output: function(msg) {
-      if (true) {
+      if (false) {
         console.log(msg);
       }
     },

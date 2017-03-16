@@ -214,11 +214,11 @@
         var tradePrice = content.tradePrice;
         var change = content.change;
         var formated_pchg = content.formated_pchg;
-        console.log(pchg_state);
-        console.log(tradeTime);
-        console.log(tradePrice);
-        console.log(change);
-        console.log(formated_pchg);
+        $.output(pchg_state);
+        $.output(tradeTime);
+        $.output(tradePrice);
+        $.output(change);
+        $.output(formated_pchg);
         var priceNode = node.querySelector('.content .price');
         var tradeTimeNode = node.querySelector('.header .trade_time');
         if (tradeTimeNode) {
@@ -228,14 +228,57 @@
           priceNode.classList.remove(it);
         });
         priceNode.classList.add(pchg_state);
+
         var tradePriceNode = priceNode.querySelector('.trade_price');
-        $(tradePriceNode).one('transitionend', function(evt) {
-          var target = evt.target;
-          target.classList.remove('move_up');
-          console.log('transitionend2');
-        })
-        tradePriceNode.querySelector('.now').textContent = tradePrice;
-        tradePriceNode.classList.add('move_up');
+        var prePriceNode = tradePriceNode.querySelector('.pre');
+        var nowPriceNode = tradePriceNode.querySelector('.now');
+        if (prePriceNode.textContent != tradePrice) {
+          $(tradePriceNode).one('transitionend', function(evt) {
+            var target = evt.target;
+            prePriceNode.textContent = nowPriceNode.textContent;
+            target.classList.remove('move_up');
+            console.log('transitionend');
+          });
+          nowPriceNode.textContent = tradePrice;
+          tradePriceNode.classList.add('move_up');
+        } else {
+          $.output('the same: trade price.');
+        }
+
+        var priceChangeNode = priceNode.querySelector('.price_change');
+
+        var changeNode = priceChangeNode.querySelector('.change');
+        var preChangeNode = changeNode.querySelector('.pre');
+        var nowChangeNode = changeNode.querySelector('.now');
+        if (preChangeNode.textContent != change) {
+          $(changeNode).one('transitionend', function(evt) {
+            var target = evt.target;
+            preChangeNode.textContent = nowChangeNode.textContent;
+            target.classList.remove('move_up');
+            console.log('transitionend');
+          });
+          nowChangeNode.textContent = change;
+          changeNode.classList.add('move_up');
+        } else {
+          $.output('the same: change.');
+        }
+
+        var pchgNode = priceChangeNode.querySelector('.pchg');
+        var prePchgNode = pchgNode.querySelector('.pre');
+        var nowPchgNode = pchgNode.querySelector('.now');
+        if (prePchgNode.textContent != formated_pchg) {
+          $(pchgNode).one('transitionend', function(evt) {
+            var target = evt.target;
+            prePchgNode.textContent = nowPchgNode.textContent;
+            target.classList.remove('move_up');
+            console.log('transitionend');
+          });
+          nowPchgNode.textContent = formated_pchg;
+          pchgNode.classList.add('move_up');
+        } else {
+          $.output('the same: pchg.');
+        }
+
       }
       Array.prototype.slice.call(document.querySelectorAll('#stock_quotation')).forEach(function(quotationNode) {
         if (!$.isElementNotInViewport(quotationNode)) {
@@ -361,11 +404,15 @@
            ' <div class="content">' +
               '<div class="price item ' + content.pchg_state +'">' +
                 '<div class="trade_price_container">' +
-                  '<div class="trade_price"><span class="pre">' + content.tradePrice + '</span><span class="now">3.56</span></div>' +
+                  '<div class="trade_price"><span class="pre">' + content.tradePrice + '</span><span class="now"></span></div>' +
                 '</div>' +
                 '<div class="price_change">' +
-                  '<div class="change">' + content.change + '</div>' +
-                  '<div class="pchg">' + content.formated_pchg + '</div>' +
+                  '<div class="change_container">' +
+                    '<div class="change"><span class="pre">' + content.change + '</span><span class="now">123</span></div>' +
+                  '</div>' +
+                  '<div class="pchg_container">' +
+                    '<div class="pchg"><span class="pre">' + content.formated_pchg + '</span><span class="now">234</span></div>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
               '<div class="item price_show">' +

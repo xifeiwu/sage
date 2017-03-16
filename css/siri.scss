@@ -409,11 +409,7 @@ body {
         .trade_price {
           font-size: 32px;
           text-align: center;
-          .pre {
-            display: block;
-            line-height: 36px;
-          }
-          .now {
+          .pre, .now {
             display: block;
             line-height: 36px;
           }
@@ -435,6 +431,50 @@ body {
         @include flex_justify_content();
         font-size: 16px;
         line-height: 22px;
+        .change_container {
+          height: 22px;
+          overflow-y: hidden;
+          .change {
+            .pre, .now {
+              display: block;
+              line-height: 22px;
+            }
+            &.move_up {
+              -webkit-transform: translateY(-50%);
+              -moz-transform: translateY(-50%);
+              -o-transform: translateY(-50%);
+              -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+              -webkit-transition: -webkit-transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              -moz-transition: -moz-transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              -o-transition: -o-transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              -ms-transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            }
+          }
+        }
+        .pchg_container {
+          height: 22px;
+          overflow-y: hidden;
+          .pchg {
+            .pre, .now {
+              display: block;
+              line-height: 22px;
+            }
+            &.move_up {
+              -webkit-transform: translateY(-50%);
+              -moz-transform: translateY(-50%);
+              -o-transform: translateY(-50%);
+              -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+              -webkit-transition: -webkit-transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              -moz-transition: -moz-transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              -o-transition: -o-transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              -ms-transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+              transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            }
+          }
+        }
       }
     }
     .item {

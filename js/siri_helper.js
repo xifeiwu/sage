@@ -211,6 +211,8 @@ NetConnector.prototype = {
         break;
     }
     body.stockStatus = stockStatus;
+    var tradePrice = body.tradePrice;
+    body.tradePrice = tradePrice.toFixed(2);
     var tradeDate = body.tradeDate;
     body.tradeDate = tradeDate.substr(4, 2) + '-' + tradeDate.substr(6, 2);
     var tradeTime = body.tradeTime;
