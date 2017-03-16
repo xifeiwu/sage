@@ -149,6 +149,7 @@
     };
     this.netConnector = new NetConnector();
     this.answerStyle = this.netConnector.answerStyle;
+    this.sageSayCnt = 0;
   }
   BenewSIRI.prototype = {
     init: function() {
@@ -302,14 +303,30 @@
         }
       }.bind(this));
     },
+
     startHeartBeat: function() {
-      var stockQuotation = 0;
+      var stockQuotationCnt = 0;
       $.output('start interval');
       self.heartBeatInterval = setInterval(function() {
-        stockQuotation += 1;
-        if (stockQuotation > 6) {
-          stockQuotation = 0;
+        stockQuotationCnt += 1;
+        if (stockQuotationCnt > 6) {
+          stockQuotationCnt = 0;
           this.refreshStockQuotationInViewport();
+        }
+        this.sageSayCnt += 1;
+        $.output(this.sageSayCnt);
+        if (this.sageSayCnt > 30) {
+          var today = $.toLocaleFormat(new Date(), 'yyyy-MM-dd');
+          if (localStorage.dateOfSageSay) {
+            if (today !== localStorage.dateOfSageSay) {
+              localStorage.dateOfSageSay = today;
+              this.siriSay('hi');
+            }
+          } else {
+            localStorage.dateOfSageSay = today;
+            this.siriSay('hi');
+          }
+          this.sageSayCnt = 0;
         }
       }.bind(this), 1000);
     },
@@ -341,12 +358,15 @@
       if (!question || question.length == 0) {
         return;
       }
+      this.sageSayCnt = 0;
       question = question.trim();
       if (question.length > 0) {
         var cardNode = this.createCard({
           type: this.cardStyle.USER_ASK,
           content: question,
         });
+        // scroll ask first
+        this.scrollAnimate();
         this.netConnector.askServer({
           type: 'ASK',
           question: question
@@ -357,7 +377,8 @@
               content: '网络好像出了些问题。。。'
             }];
           }
-          this.hideLoading();
+          // hide loading of current card.
+          this.hideLoading(cardNode);
           var answerDOM = formated_contents.map(function(it) {
             return this.createAnswerDOM(it);
           }.bind(this)).join('');
@@ -517,8 +538,8 @@
       // }
       return card;
     },
-    hideLoading: function() {
-      $('.answer_row .ans_cont .ans_box .dots_loading').closest('.answer_row').remove();
+    hideLoading: function(cardNode) {
+      cardNode.find('.answer_row .ans_cont .ans_box .dots_loading').closest('.answer_row').remove();
     },
     scrollAnimate: function() {
       var scrollTop = false;
