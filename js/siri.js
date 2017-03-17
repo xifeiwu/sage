@@ -197,7 +197,8 @@
           // window.location.hash = '';
           // window.location.hash = 'input_bar';
         }, 250);
-      });
+        this.resetSageSayCnt();
+      }.bind(this));
       $('#input_bar input[type="text"]').on('blur', function(evt) {
         window.location.hash = '';
       });
@@ -303,7 +304,9 @@
         }
       }.bind(this));
     },
-
+    resetSageSayCnt: function() {
+      this.sageSayCnt = 0;
+    },
     startHeartBeat: function() {
       var stockQuotationCnt = 0;
       $.output('start interval');
@@ -317,16 +320,35 @@
         $.output(this.sageSayCnt);
         if (this.sageSayCnt > 30) {
           var today = $.toLocaleFormat(new Date(), 'yyyy-MM-dd');
-          if (localStorage.dateOfSageSay) {
-            if (today !== localStorage.dateOfSageSay) {
-              localStorage.dateOfSageSay = today;
-              this.siriSay('hi');
-            }
+          var tagSageSay = null;
+          if (localStorage.tagSageSay) {
+            tagSageSay = JSON.parse(localStorage.tagSageSay);
           } else {
-            localStorage.dateOfSageSay = today;
-            this.siriSay('hi');
+            tagSageSay = {
+              'readme': '记录sage主动询问的状态'
+            }
           }
-          this.sageSayCnt = 0;
+          // the first tip
+          if (!'date' in tagSageSay) {
+            tagSageSay.date = today;
+            tagSageSay.sayTimes = 1;
+            this.siriSay('firstTip');
+            localStorage.tagSageSay = JSON.stringify(tagSageSay);
+          } else if (tagSageSay && today !== tagSageSay.date) {
+            tagSageSay.date = today;
+            tagSageSay.sayTimes = 1;
+            this.siriSay('firstTip');
+            localStorage.tagSageSay = JSON.stringify(tagSageSay);
+          }
+          // the second tip
+          if (this.sageSayCnt > 35) {
+            if (tagSageSay && 'sayTimes' in tagSageSay && tagSageSay.sayTimes < 2) {
+              tagSageSay.sayTimes = 2;
+              this.siriSay('secondTip');
+              localStorage.tagSageSay = JSON.stringify(tagSageSay);
+            }
+            this.resetSageSayCnt();
+          }
         }
       }.bind(this), 1000);
     },
@@ -358,7 +380,6 @@
       if (!question || question.length == 0) {
         return;
       }
-      this.sageSayCnt = 0;
       question = question.trim();
       if (question.length > 0) {
         var cardNode = this.createCard({
