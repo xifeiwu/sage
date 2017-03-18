@@ -102,8 +102,7 @@ gulp.task('jsApp', [], function() {
 });
 
 gulp.task('lint', function () {
-  return gulp
-    .src([source.js.stockpool, source.js['stockpool-v2'], source.js.discovery, source.js.forecast, source.js['forecast-v2'], source.js.hot, source.js.download].join(",").split(","))
+  return gulp.src('js/*.js')
     .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter(stylish, {
       verbose: true

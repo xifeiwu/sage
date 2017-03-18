@@ -1,10 +1,11 @@
+'use strict';
 ! function() {
   var SIRIAskHint = function(container) {
     console.log(container);
     this.container = container;
     this.askHintDOM = $('#siri_ask_hint');
     this.init();
-  }
+  };
   SIRIAskHint.prototype = {
     init: function() {
       this.initDOM();
@@ -24,7 +25,7 @@
     initDOM: function() {
       function getAskHintDOM(resData) {
         function ulGenerator(items) {
-          var str = '<div class="swiper-slide"><ul class="hint_list move_up">'
+          var str = '<div class="swiper-slide"><ul class="hint_list move_up">';
           items.forEach(function(it) {
             str += '<li>' + it + '</li>';
           });
@@ -35,7 +36,7 @@
         for (var i = 0; i < resData.length; i++) {
           ulstr += ulGenerator(resData[i].items);
         }
-        answerDom = 
+        var answerDom = 
 '<div class="content">' +
   '<h2>你可以这样问我:</h2>' +
   '<div class="swiper-container swiper-container-horizontal" id="swiper">' +
@@ -56,8 +57,8 @@
         // $.output(content);
         var resData = null;
         if (err) {
-          if (localStorage.ASK_HINT) {
-            resData = JSON.parse(localStorage.ASK_HINT);
+          if (window.localStorage.ASK_HINT) {
+            resData = JSON.parse(window.localStorage.ASK_HINT);
           } else {
             resData = [
             {items: ['600519', '开户', '选股', 'KDJ', '茅台行情']}
@@ -65,7 +66,7 @@
           }
         } else {
           resData = content.data.body;
-          localStorage.ASK_HINT = JSON.stringify(resData);
+          window.localStorage.ASK_HINT = JSON.stringify(resData);
         }
         var answerDom = getAskHintDOM(resData);
         this.askHintDOM.html('');
@@ -108,13 +109,13 @@
           swiper.stopSlide();
           swiperSlides[swiper.activeId].classList.add('swiper-slide-active');
           swiper.interVal = setInterval(swiper.slideNext, 3000);
-        }
+        };
         swiper.stopSlide = function() {
           swiper.interVal && clearInterval(swiper.interVal);
           Array.prototype.slice.call(swiper.swiperSlides).forEach(function(it) {
             it.classList.remove('swiper-slide-active');
-          })
-        }
+          });
+        };
       }
       return swiper;
     },
@@ -136,10 +137,10 @@
 
 
   var BenewSIRI = function() {
-    this.from =  null == $.getQueryString("from") || "app" == $.getQueryString("from") ? "app" : "web";
-    this.env = $.getQueryString("env");
+    this.from =  null === $.getQueryString('from') || 'app' == $.getQueryString('from') ? 'app' : 'web';
+    this.env = $.getQueryString('env');
     this.cardCnt = 1;
-    this.cardName = "card_1";
+    this.cardName = 'card_1';
     this.dialogWrapper = document.getElementById('dialog_wrapper');
     this.wrapperHeight = $(this.dialogWrapper).height();
     this.cardStyle = {
@@ -150,7 +151,7 @@
     this.netConnector = new NetConnector();
     this.answerStyle = this.netConnector.answerStyle;
     this.sageSayCnt = 0;
-  }
+  };
   BenewSIRI.prototype = {
     init: function() {
       this.siriAskHint = new SIRIAskHint(this);
@@ -159,22 +160,22 @@
       this.startHeartBeat();
     },
     addEvent: function() {
-      $("#input_bar .btn_go").on("click", function() {
-        var inputBar = $("#input_bar input");
+      $('#input_bar .btn_go').on('click', function() {
+        var inputBar = $('#input_bar input');
         this.askSIRI(inputBar.val());
         inputBar.val('');
         inputBar.blur();
       }.bind(this));
-      $("#input_bar input").on('keydown', function(t) {
+      $('#input_bar input').on('keydown', function(t) {
         var s = t || window.event;
-        if (s && 13 == s.keyCode) {
+        if (s && 13 === s.keyCode) {
           var inputBar = $('#input_bar input');
           this.askSIRI(inputBar.val());
           inputBar.val('');
           inputBar.blur();
         }
       }.bind(this));
-      $.touchEvent($("#dialog"), ".show_ask_hint", function() {
+      $.touchEvent($('#dialog'), '.show_ask_hint', function() {
         this.siriAskHint.show(true);
       }.bind(this));
       $.touchEvent($('#dialog'), '.active_link', function(evt) {
@@ -209,7 +210,7 @@
       // });
     },
     refreshStockQuotationInViewport: function() {
-      updateStockQuotationNode = function(node, item) {
+      var updateStockQuotationNode = function(node, item) {
         var content = item.content;
         var pchg_state = content.pchg_state;
         var tradeTime = content.tradeTime;
@@ -234,7 +235,7 @@
         var tradePriceNode = priceNode.querySelector('.trade_price');
         var prePriceNode = tradePriceNode.querySelector('.pre');
         var nowPriceNode = tradePriceNode.querySelector('.now');
-        if (prePriceNode.textContent != tradePrice) {
+        if (prePriceNode.textContent !== tradePrice) {
           $(tradePriceNode).one('transitionend', function(evt) {
             var target = evt.target;
             prePriceNode.textContent = nowPriceNode.textContent;
@@ -252,7 +253,7 @@
         var changeNode = priceChangeNode.querySelector('.change');
         var preChangeNode = changeNode.querySelector('.pre');
         var nowChangeNode = changeNode.querySelector('.now');
-        if (preChangeNode.textContent != change) {
+        if (preChangeNode.textContent !== change) {
           $(changeNode).one('transitionend', function(evt) {
             var target = evt.target;
             preChangeNode.textContent = nowChangeNode.textContent;
@@ -268,7 +269,7 @@
         var pchgNode = priceChangeNode.querySelector('.pchg');
         var prePchgNode = pchgNode.querySelector('.pre');
         var nowPchgNode = pchgNode.querySelector('.now');
-        if (prePchgNode.textContent != formated_pchg) {
+        if (prePchgNode.textContent !== formated_pchg) {
           $(pchgNode).one('transitionend', function(evt) {
             var target = evt.target;
             prePchgNode.textContent = nowPchgNode.textContent;
@@ -281,10 +282,10 @@
           $.output('the same: pchg.');
         }
 
-      }
+      };
       Array.prototype.slice.call(document.querySelectorAll('#stock_quotation')).forEach(function(quotationNode) {
-        if (!$.isElementNotInViewport(quotationNode)) {
-          if (!'code' in quotationNode.dataset) {
+        if (! $.isElementNotInViewport(quotationNode)) {
+          if (! 'code' in quotationNode.dataset) {
             return;
           }
           var secode = quotationNode.dataset.code;
@@ -310,7 +311,7 @@
     startHeartBeat: function() {
       var stockQuotationCnt = 0;
       $.output('start interval');
-      self.heartBeatInterval = setInterval(function() {
+      this.heartBeatInterval = setInterval(function() {
         stockQuotationCnt += 1;
         if (stockQuotationCnt > 6) {
           stockQuotationCnt = 0;
@@ -321,8 +322,8 @@
         if (this.sageSayCnt > 30) {
           var today = $.toLocaleFormat(new Date(), 'yyyy-MM-dd');
           var tagSageSay = null;
-          if (localStorage.tagSageSay) {
-            tagSageSay = JSON.parse(localStorage.tagSageSay);
+          if (window.localStorage.tagSageSay) {
+            tagSageSay = JSON.parse(window.localStorage.tagSageSay);
           } else {
             tagSageSay = {
               'readme': '记录sage主动询问的状态'
@@ -333,19 +334,19 @@
             tagSageSay.date = today;
             tagSageSay.sayTimes = 1;
             this.siriSay('firstTip');
-            localStorage.tagSageSay = JSON.stringify(tagSageSay);
+            window.localStorage.tagSageSay = JSON.stringify(tagSageSay);
           } else if (tagSageSay && today !== tagSageSay.date) {
             tagSageSay.date = today;
             tagSageSay.sayTimes = 1;
             this.siriSay('firstTip');
-            localStorage.tagSageSay = JSON.stringify(tagSageSay);
+            window.localStorage.tagSageSay = JSON.stringify(tagSageSay);
           }
           // the second tip
           if (this.sageSayCnt > 35) {
             if (tagSageSay && 'sayTimes' in tagSageSay && tagSageSay.sayTimes < 2) {
               tagSageSay.sayTimes = 2;
               this.siriSay('secondTip');
-              localStorage.tagSageSay = JSON.stringify(tagSageSay);
+              window.localStorage.tagSageSay = JSON.stringify(tagSageSay);
             }
             this.resetSageSayCnt();
           }
@@ -353,7 +354,7 @@
       }.bind(this), 1000);
     },
     siriSay: function(content) {
-      if (!content || content.length == 0) {
+      if (!content || content.length === 0) {
         return;
       }
       content = content.trim();
@@ -377,7 +378,7 @@
       }
     },
     askSIRI: function(question) {
-      if (!question || question.length == 0) {
+      if (!question || question.length === 0) {
         return;
       }
       question = question.trim();
@@ -404,7 +405,7 @@
             return this.createAnswerDOM(it);
           }.bind(this)).join('');
           cardNode.append($(answerDOM));
-          this.scrollAnimate()
+          this.scrollAnimate();
         }.bind(this));
       }
     },
@@ -425,7 +426,7 @@
             style: this.answerStyle.PLAIN_TEXT,
             content: options.content
           }) + '<div class="show_ask_hint"><span>你可以这样问我 ></span></div>';
-          break;
+          // no break; is needed as return before
         case this.answerStyle.PLAIN_TEXT:
           answerDom = '<div class="ans_box">' + options.content + '</div>';
           break;
@@ -510,7 +511,7 @@
         t = $(".card");
       if (t.length > e) {
         for (var s = 0, i = t.length - e; s < i; s++) {
-          $(t[s]).remove()
+          $(t[s]).remove();
         }
       }
     },
@@ -532,21 +533,21 @@
           }.bind(this)).join('');
         break;
         case this.cardStyle.USER_ASK:
-          askDom = '<div class="ask_row"><span>' + options.content + '</span></div>'
+          askDom = '<div class="ask_row"><span>' + options.content + '</span></div>';
           answerDom = this.createAnswerDOM({
             style: this.answerStyle.WAITING,
           });
           break;
       }
-      if ("selectStockTips" == options.type) {
+      if ('selectStockTips' == options.type) {
         askDom = '';
         answerDom = this.createAnswerDOM(options);
-      } else if ("onlyAnswer" == options.type) {
+      } else if ('onlyAnswer' == options.type) {
         askDom = '';
         answerDom = this.createAnswerDOM(options);
       }
-      var card = $("<div id='" + this.cardName + "' class='card' style='overflow: hidden;'>" + askDom + answerDom + "</div>");
-      card.insertBefore($("#bottomDiv"))
+      var card = $('<div id="' + this.cardName + '" class="card" style="overflow: hidden;">' + askDom + answerDom + '</div>');
+      card.insertBefore($('#bottomDiv'));
       // if ("firstTips" != options.type && "onlyAnswer" != options.type && "selectStockTips" != options.type) {
       // } else {
       //   this.bottomDiv({
@@ -574,7 +575,7 @@
     bottomDiv: function() {
       var curCard = $('#' + this.cardName);
       var cardHeight = curCard.height();
-      var bootomHeight = this.wrapperHeight - cardHeight
+      var bootomHeight = this.wrapperHeight - cardHeight;
       if ((this.wrapperHeight - cardHeight) > 0) {
         bootomHeight = this.wrapperHeight - cardHeight;
       } else {
@@ -648,22 +649,22 @@
       scrollFunc();
     },
     openUrl: function(e) {
-      location.href = e.url
+      location.href = e.url;
     },
     createIframe: function(e) {
       var t = e.url,
         s = $(window).width() - 50 - 26,
-        i = document.createElement("iframe");
-      return i.name = e.cardName, i.setAttribute("style", "visibility:hidden;overflow: hidden;"), i.setAttribute("width", s), i.setAttribute("border", "none"), i.setAttribute("frameborder", "no"), i.setAttribute("src", t), i.onerror = function() {}, i
+        i = document.createElement('iframe');
+      return i.name = e.cardName, i.setAttribute('style', 'visibility:hidden;overflow: hidden;'), i.setAttribute('width', s), i.setAttribute('border', 'none'), i.setAttribute('frameborder', 'no'), i.setAttribute('src', t), i.onerror = function() {}, i
     },
     showIframe: function(e) {
       var t = $(window).width() - 50 - 26,
         s = document.getElementsByName(e.cardName)[0];
-      $(s.contentWindow.document.body).width(t + "px");
+      $(s.contentWindow.document.body).width(t + 'px');
       var i = this;
       setTimeout(function() {
-        i.updateIframe(e), $(s).attr("style", "visibility：visible;overflow: hidden;")
-      }, 10)
+        i.updateIframe(e), $(s).attr('style', 'visibility：visible;overflow: hidden;');
+      }, 10);
     },
     updateIframe: function(e) {
       var t = e.cardName;
@@ -671,11 +672,11 @@
         var s = document.getElementsByName(t)[0],
           i = $(s.contentWindow.document.body)[0].offsetHeight + 12,
           a = $(window).width() - 50 - 26;
-        $(s.contentWindow.document.body).width(a + "px"), $(s).attr("height", i), $(s).attr("width", a), this.bottomDiv(e)
+        $(s.contentWindow.document.body).width(a + 'px'), $(s).attr('height', i), $(s).attr('width', a), this.bottomDiv(e);
       }
     },
   };
-  benewSIRI = new BenewSIRI();
+  var benewSIRI = new BenewSIRI();
   benewSIRI.init();
   window.benewSIRI = benewSIRI;
 }();

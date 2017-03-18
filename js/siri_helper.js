@@ -1,3 +1,4 @@
+'use strict';
 var NetConnector = function() {
   this.profile = 'uat';
   this.answerStyle = {
@@ -9,12 +10,12 @@ var NetConnector = function() {
     'STOCK_HOT': 6,
     'STOCK_FORECAST': 7
   };
-}
+};
 
 NetConnector.prototype = {
   setToken: function(token) {
     // if (!localStorage.token) {
-      localStorage.token = token;
+      window.localStorage.token = token;
     // }
   },
 
@@ -37,7 +38,7 @@ NetConnector.prototype = {
   getURL: function(question) {
     var host = this.getAjaxHost(this.profile);
     var path = 'bot/api/v1/botServer/sessionOperator/receiveh5?msg=' + question;
-    var token = localStorage.token;
+    var token = window.localStorage.token;
     return host + path + (token ? '&token=' + token : '');
   },
 
@@ -68,6 +69,8 @@ NetConnector.prototype = {
         // this.getAskHint(cb);
         break;
       case 'ASK':
+        this._getSIRIAnswer(question, cb);
+        break;
       default:
         this._getSIRIAnswer(question, cb);
         // this.throttle(function() {
@@ -86,7 +89,7 @@ NetConnector.prototype = {
     var successCB = function(response) {
       self.setToken(response.token);
       var contents = response.content;
-      var formated_contents = []
+      var formated_contents = [];
       for (var i = 0; i < contents.length; i++) {
         var content = contents[i];
         if ('type' in content) {
@@ -104,13 +107,13 @@ NetConnector.prototype = {
               formated_contents.push({
                 style: self.answerStyle.STOCK_HOT,
                 content: content.data.body
-              })
+              });
               break;
             case 'forecast':
               formated_contents.push({
                 style: self.answerStyle.STOCK_FORECAST,
                 content: content.data.body
-              })
+              });
               break;
             case 'plain':
               formated_contents.push({
@@ -134,20 +137,20 @@ NetConnector.prototype = {
         }
       }
       cb(null, formated_contents);
-    }
+    };
 
-    var token = localStorage.token;
+    var token = window.localStorage.token;
     var url = this.getURL(question);
     $.output(url);
     $.ajax({
       url : url,
-      type : "get",
-      contentType : "application/json;charset=utf-8",
-      dataType : "json",
+      type : 'get',
+      contentType : 'application/json;charset=utf-8',
+      dataType : 'json',
       timeout: 12000,
       success : function(response) {
         $.output(response);
-        if (response.code == 0) {
+        if (parseInt(response.code) === 0) {
           successCB(response);
         } else {
           cb(new Error('data not valid'));
@@ -163,8 +166,7 @@ NetConnector.prototype = {
     var body = data.body;
     var predictLinks = data.predictLinks;
     var date = body.date;
-    var date = $.toLocaleFormat(new Date(date), 'yyyy.MM.dd');
-    body.date = date;
+    body.date = $.toLocaleFormat(new Date(date), 'yyyy.MM.dd');
     body.stocks.forEach(function(it) {
       var topen = parseFloat(it.topen);
       var pchg = parseFloat(it.pchg) * 100;
@@ -243,120 +245,120 @@ NetConnector.prototype = {
     var links = [];
     predictLinks.forEach(function(it) {
       links.push(it.text);
-    })
+    });
     body.links = links;
     return body;
   },
 
   set_test_data: function() {
     this.recommendAnswer =  {
-      "code": 0,
-      "dt": 1486624881551,
-      "status": "success",
-      "content": [{
-        "type": "recommend",
-        "data": {
-          "body": [{
-            "studio": "你可以这样问",
-            "items": [
-              "600519",
-              "开户",
-              "选股",
-              "KDJ",
-              "茅台行情"
+      'code': 0,
+      'dt': 1486624881551,
+      'status': 'success',
+      'content': [{
+        'type': 'recommend',
+        'data': {
+          'body': [{
+            'studio': '你可以这样问',
+            'items': [
+              '600519',
+              '开户',
+              '选股',
+              'KDJ',
+              '茅台行情'
             ]
           }, {
-            "studio": "你可以这样问",
-            "items": [
-              "热议榜",
-              "洗盘",
-              "600519",
-              "茅台指标",
-              "茅台行情"
+            'studio': '你可以这样问',
+            'items': [
+              '热议榜',
+              '洗盘',
+              '600519',
+              '茅台指标',
+              '茅台行情'
             ]
           }],
-          "predictLink": []
+          'predictLink': []
         }
       }]
     };
     this.quotationAnswer = {
-      "code": 0,
-      "dt": 1486624881551,
-      "status": "success",
-      "content": [
+      'code': 0,
+      'dt': 1486624881551,
+      'status': 'success',
+      'content': [
         {
-          "type": "plain", //plain或者其他没有匹配的模板统一走这个
-          "data": {
-            "body": "该股票行情如下：",
-            "predictLink": []
+          'type': 'plain', //plain或者其他没有匹配的模板统一走这个
+          'data': {
+            'body': '该股票行情如下：',
+            'predictLink': []
           }
         }, 
         {
-          "type": "quotation",
-          "data": {
-            "body": {
-              "tradeName": "贵州茅台",
-              "tradeCode": "600519",
-              "stockStatus": "交易中",
-              "tradePrice": 358.74,
-              "change": "2.55%",
-              "pchg": "10.01%",
-              "tradeDate": "2017-02-22",
-              "tradeTime": "10:37:03",
-              "topen": 362.43,
-              "lclose": 362.43,
-              "thigh": 362.43,
-              "tlow": 352.43
+          'type': 'quotation',
+          'data': {
+            'body': {
+              'tradeName': '贵州茅台',
+              'tradeCode': '600519',
+              'stockStatus': '交易中',
+              'tradePrice': 358.74,
+              'change': '2.55%',
+              'pchg': '10.01%',
+              'tradeDate': '2017-02-22',
+              'tradeTime': '10:37:03',
+              'topen': 362.43,
+              'lclose': 362.43,
+              'thigh': 362.43,
+              'tlow': 352.43
             },
-            "predictLink": [{
-              "text": "预测",
-              "style": "isRed",
-              "link": "",
-              "value": "预测"
+            'predictLink': [{
+              'text': '预测',
+              'style': 'isRed',
+              'link': '',
+              'value': '预测'
             }, {
-              "text": "热点",
-              "style": "",
-              "link": "",
-              "value": "热点"
+              'text': '热点',
+              'style': '',
+              'link': '',
+              'value': '热点'
             }, {
-              "text": "选股",
-              "style": "",
-              "link": "http:\\#",
-              "value": "选股"
+              'text': '选股',
+              'style': '',
+              'link': 'http:\\#',
+              'value': '选股'
             }]
           }
         }
       ]
     };
     this.choosedStocks = {
-      "code": 0,
-      "dt": 1486624881551,
-      "status": "success",
-      "content": [{
-        "type": "optimization",
-        "data": {
-          "body": {
-            "date": "2017-02-23",
-            "stocks": [{
-              "name": "航天电子",
-              "code": "600879",
-              "topen": 16.89,
-              "pchg": "1.29%"
+      'code': 0,
+      'dt': 1486624881551,
+      'status': 'success',
+      'content': [{
+        'type': 'optimization',
+        'data': {
+          'body': {
+            'date': '2017-02-23',
+            'stocks': [{
+              'name': '航天电子',
+              'code': '600879',
+              'topen': 16.89,
+              'pchg': '1.29%'
             }, {
-              "name": "东方铁塔",
-              "code": "002545",
-              "topen": 11.82,
-              "pchg": "-0.51%"
+              'name': '东方铁塔',
+              'code': '002545',
+              'topen': 11.82,
+              'pchg': '-0.51%'
             }]
           },
-          "predictLink": [{
-            "text": "点击获取更多",
-            "style": "link",
-            "link": "http://#h5页面",
-            "value": "点击获取更多"
+          'predictLink': [{
+            'text': '点击获取更多',
+            'style': 'link',
+            'link': 'http://#h5页面',
+            'value': '点击获取更多'
           }]
         }
       }]
     };
   },
-}
+};
