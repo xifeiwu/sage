@@ -1,6 +1,6 @@
 'use strict';
 var NetConnector = function() {
-  this.profile = 'product';
+  this.profile = 'uat';
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,
