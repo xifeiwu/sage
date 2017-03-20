@@ -240,7 +240,6 @@
             var target = evt.target;
             prePriceNode.textContent = nowPriceNode.textContent;
             target.classList.remove('move_up');
-            console.log('transitionend');
           });
           nowPriceNode.textContent = tradePrice;
           tradePriceNode.classList.add('move_up');
@@ -253,12 +252,11 @@
         var changeNode = priceChangeNode.querySelector('.change');
         var preChangeNode = changeNode.querySelector('.pre');
         var nowChangeNode = changeNode.querySelector('.now');
-        if (preChangeNode.textContent !== change) {
+        if (parseFloat(preChangeNode.textContent) !== parseFloat(change)) {
           $(changeNode).one('transitionend', function(evt) {
             var target = evt.target;
             preChangeNode.textContent = nowChangeNode.textContent;
             target.classList.remove('move_up');
-            console.log('transitionend');
           });
           nowChangeNode.textContent = change;
           changeNode.classList.add('move_up');
@@ -274,7 +272,6 @@
             var target = evt.target;
             prePchgNode.textContent = nowPchgNode.textContent;
             target.classList.remove('move_up');
-            console.log('transitionend');
           });
           nowPchgNode.textContent = formated_pchg;
           pchgNode.classList.add('move_up');
