@@ -286,7 +286,7 @@
           }
           var secode = quotationNode.dataset.code;
           this.netConnector.askServer({
-            type: 'ASK',
+            type: 'REFRESH',
             question: secode
           }, function(err, formated_contents) {
             if (err) {

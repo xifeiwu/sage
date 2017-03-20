@@ -35,9 +35,17 @@ NetConnector.prototype = {
     return host;
   },
 
-  getURL: function(question) {
+  _getURL: function(type, question) {
     var host = this.getAjaxHost(this.profile);
-    var path = 'bot/api/v1/botServer/sessionOperator/receiveh5?msg=' + question;
+    var path = null;
+    switch (type) {
+      case 'ASK':
+        path = 'bot/api/v1/botServer/sessionOperator/receiveh5?msg=' + question;
+        break;
+      case 'REFRESH':
+        path = 'bot/api/v1/botServer/sessionOperator/flashh5?msg=' + question + 'refresh';
+        break;
+    }
     var token = window.localStorage.token;
     return host + path + (token ? '&token=' + token : '');
   },
@@ -69,10 +77,13 @@ NetConnector.prototype = {
         // this.getAskHint(cb);
         break;
       case 'ASK':
-        this._getSIRIAnswer(question, cb);
+        this._getSIRIAnswer(type, question, cb);
+        break;
+      case 'REFRESH':
+        this._getSIRIAnswer(type, question, cb);
         break;
       default:
-        this._getSIRIAnswer(question, cb);
+        this._getSIRIAnswer(type, question, cb);
         // this.throttle(function() {
         //   this._getSIRIAnswer(question, cb);
         // }.bind(this));
@@ -80,7 +91,7 @@ NetConnector.prototype = {
     }
   },
 
-  _getSIRIAnswer: function(question, cb) {
+  _getSIRIAnswer: function(type, question, cb) {
     var self = this;
     // the data from server
     // var response = this.recommendAnswer;
@@ -140,7 +151,7 @@ NetConnector.prototype = {
     };
 
     var token = window.localStorage.token;
-    var url = this.getURL(question);
+    var url = this._getURL(type, question);
     $.output(url);
     $.ajax({
       url : url,
