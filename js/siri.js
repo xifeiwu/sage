@@ -1,7 +1,6 @@
 'use strict';
 ! function() {
   var SIRIAskHint = function(container) {
-    console.log(container);
     this.container = container;
     this.askHintDOM = $('#siri_ask_hint');
     this.init();
