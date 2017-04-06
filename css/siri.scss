@@ -4,25 +4,189 @@
 $ask_answer_row_margin: 20px;
 $benew_color: #457AEE;
 
-.ans_box a, a {
-  color: $benew_color;
-  text-decoration: none
+$background_color: white;
+$ask_foreground_color: white;
+$ask_background_color: $benew_color;
+$answer_foreground_color: #595959;
+$answer_background_color: #f2f3f7;
+$input_bar_background_color: #F8F8F8;
+$input_bar_input_foreground_color: #eee;
+$input_bar_input_background_color: white;
+
+$app_background_color: #1e1e27;
+$app_ask_foreground_color: #EBECF5;
+$app_ask_background_color: #2491FF;
+$app_answer_foreground_color: #EBECF5;
+$app_answer_background_color: #252632;
+$app_input_bar_background_color: #1E1E27;
+$app_input_bar_input_foreground_color: #EBECF5;
+$app_input_bar_input_background_color: #252632;
+
+#main.app {
+  background: $app_background_color;
+  #dialog_wrapper {
+    #dialog {
+      .card {
+        .ask_row {
+          span {
+            color: $app_ask_foreground_color;
+            background-color: $app_ask_background_color;
+          }
+        }
+        .answer_row {
+          .ans_cont {
+            .ans_box {
+              color: $app_answer_foreground_color;
+              background-color: $app_answer_background_color;
+            }
+          }
+        }
+      }
+    }
+  }
+  #input_bar {
+    background-color: $app_input_bar_background_color;
+    border-top: 1px $app_input_bar_background_color solid;
+    input {
+      color: $app_input_bar_input_foreground_color;
+      background-color: $app_input_bar_input_background_color;
+      border: 1px solid $app_input_bar_input_background_color;
+    }
+  }
 }
 
-body {
-  font-family: Helvetica,sans-serif;
-  background: white;
+// 功能列表弹窗
+#siri_ask_hint.app {
+  background-color: $app_background_color;
+  .content {
+    h2 {
+      color: $benew_color;
+    }
+    .swiper-container {
+      .swiper-wrapper {
+        .swiper-slide {
+          &.swiper-slide-active {
+          }
+          .hint_list li {
+            color: $app_answer_foreground_color;
+          }
+        }
+      }
+    }
+    .btn_change_wrapper {
+      .btn_change {
+        border: 1px solid $app_answer_foreground_color;
+        color: $app_answer_foreground_color;
+        &.active {
+          color: $app_answer_foreground_color;
+          border: 1px solid $app_answer_foreground_color;
+        }
+      }
+    }
+    .btn_close_wrapper {
+      .btn_close{
+      }
+    }
+  }
+}
+
+.app {
+  #stock_quotation {
+    .header {
+      .title {
+        color: $app_answer_foreground_color;
+      }
+      .status {
+        color: #909090;
+      }
+    }
+    .content {
+      .price {
+        &.up {
+          color: #FF5871;
+        }
+        &.down {
+          color: #5FCD8B;
+        }
+        &.stay {
+          color: #909090;
+        }
+      }
+      .price_show span {
+        &:first-child{
+          color: $app_answer_foreground_color;
+        }
+        &:last-child{
+          color: $app_answer_foreground_color;
+        }
+      }
+    }
+    .footer {
+      .active_link {
+        color: $app_answer_foreground_color;
+        &:first-child {
+          border-right: 1px solid $app_answer_foreground_color;
+        }
+      }
+    }
+  }
+
+  // 会牛选股
+  #hot_stocks {
+    .header {
+      color: $app_answer_foreground_color;
+      line-height: 45px;
+      border-bottom: 1px solid #d4d7dc;
+      text-align: center;
+    }
+    .content {
+      .title {
+        color: $app_answer_foreground_color;
+      }
+      table {
+        tr {
+        }
+        th {
+          color: #909090;
+        }
+        td {
+          color: $app_answer_foreground_color;
+          .stock_name {
+            color: $app_answer_foreground_color;
+          }
+          .stock_code {
+            color: #909090;
+          }
+          &.pchg {
+            &.up {
+              color: #FF5871;
+            }
+            &.down {
+              color: #5FCD8B;
+            }
+            &.stay {
+              color: #909090;
+            }
+          }
+        }
+      }
+    }
+    .footer {
+      color: $app_answer_foreground_color;
+    }
+  }
 }
 
 #main {
   height: 100%;
   font-size: 16px;
   position: relative;
+  font-family: Helvetica,sans-serif;
+  background: $background_color;
   #dialog_wrapper {
     position: relative;
     height: calc(100% - 51px);
     overflow-y: scroll;
-    color: #595959;
     -webkit-text-size-adjust: none;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
@@ -42,8 +206,8 @@ body {
           padding: 0 12px 0 58px;
           span {
             display: inline-block;
-            background-color: $benew_color;
-            color: #fff;
+            background-color: $ask_background_color;
+            color: $ask_foreground_color;
             border-radius: 12px 0 12px 12px;
             padding: 8px 12px;
             text-align: left;
@@ -79,12 +243,17 @@ body {
             padding-right: 26px;
             vertical-align: top;
             .ans_box {
-              background-color: #f2f3f7;
+              color: $answer_foreground_color;
+              background-color: $answer_background_color;
               border-radius: 0 12px 12px;
               padding: 8px 12px;
               line-height: 1.4;
               display: inline-block;
               position: relative;
+              a{
+                color: $benew_color;
+                text-decoration: none
+              }
               &#stock_quotation {
                 position: relative;
                 max-width: 100%;
@@ -156,8 +325,8 @@ body {
     // bottom: 0;
     width: 100%;
     height: 51px;
-    background-color: #f8f8f8;
-    border-top: 1px #fafafa solid;
+    background-color: $input_bar_background_color;
+    border-top: 1px $input_bar_background_color solid;
     padding: 10px;
     box-sizing: border-box;
     input {
@@ -165,6 +334,7 @@ body {
       width: 70%;
       height: 30px;
       padding: 0;
+      background-color: $input_bar_input_background_color;
       border: 1px solid #eee;
       line-height: 24px;
       text-indent: 5px;

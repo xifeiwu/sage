@@ -1,6 +1,6 @@
 'use strict';
 var NetConnector = function() {
-  this.profile = 'uat';
+  this.profile = 'uat_ip';
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,

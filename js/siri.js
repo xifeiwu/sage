@@ -136,7 +136,7 @@
 
 
   var BenewSIRI = function() {
-    this.from =  null === $.getQueryString('from') || 'app' == $.getQueryString('from') ? 'app' : 'web';
+    this.from = null === $.getQueryString('from') ? 'web' : $.getQueryString('from');
     this.env = $.getQueryString('env');
     this.cardCnt = 1;
     this.cardName = 'card_1';
@@ -153,6 +153,8 @@
   };
   BenewSIRI.prototype = {
     init: function() {
+      $('#main').addClass(this.from);
+      $('#siri_ask_hint').addClass(this.from);
       this.siriAskHint = new SIRIAskHint(this);
       this.addEvent();
       this.siriSay('hi');
@@ -314,7 +316,7 @@
           this.refreshStockQuotationInViewport();
         }
         this.sageSayCnt += 1;
-        $.output(this.sageSayCnt);
+        // $.output(this.sageSayCnt);
         if (this.sageSayCnt > 30) {
           var today = $.toLocaleFormat(new Date(), 'yyyy-MM-dd');
           var tagSageSay = null;

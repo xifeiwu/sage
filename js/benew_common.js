@@ -90,7 +90,7 @@
       console.log(msg);
     },
     output: function(msg) {
-      if (false) {
+      if (true) {
         console.log(msg);
       }
     },
