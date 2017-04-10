@@ -136,7 +136,7 @@ $app_input_bar_input_background_color: #252632;
     .header {
       color: $app_answer_foreground_color;
       line-height: 45px;
-      border-bottom: 1px solid #d4d7dc;
+      border-bottom: 1px solid $app_background_color;
       text-align: center;
     }
     .content {
@@ -145,6 +145,7 @@ $app_input_bar_input_background_color: #252632;
       }
       table {
         tr {
+          border-bottom: 1px solid $app_background_color;
         }
         th {
           color: #909090;
