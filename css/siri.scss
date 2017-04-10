@@ -93,6 +93,7 @@ $app_input_bar_input_background_color: #252632;
 .app {
   #stock_quotation {
     .header {
+      border-bottom: 1px solid $app_background_color;
       .title {
         color: $app_answer_foreground_color;
       }
@@ -125,7 +126,7 @@ $app_input_bar_input_background_color: #252632;
       .active_link {
         color: $app_answer_foreground_color;
         &:first-child {
-          border-right: 1px solid $app_answer_foreground_color;
+          border-right: 1px solid $app_background_color;
         }
       }
     }
