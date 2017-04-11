@@ -160,6 +160,9 @@
       this.addEvent();
       this.siriSay('hi');
       this.startHeartBeat();
+      window.zhuge.track('sage_chat_open', {
+        'token': window.localStorage.token
+      });
     },
     addEvent: function() {
       $('#input_bar .btn_go').on('click', function() {
