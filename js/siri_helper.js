@@ -1,6 +1,6 @@
 'use strict';
 var NetConnector = function() {
-  this.profile = 'uat';
+  this.profile = 'uat_ip';
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,
@@ -14,9 +14,9 @@ var NetConnector = function() {
 
 NetConnector.prototype = {
   setToken: function(token) {
-    // if (!localStorage.token) {
+    if (token && localStorage.token !== token) {
       window.localStorage.token = token;
-    // }
+    }
   },
 
   getAjaxHost: function(profile) {
@@ -35,19 +35,48 @@ NetConnector.prototype = {
     return host;
   },
 
-  _getURL: function(type, question) {
+  getQueryString: function(obj) {
+    var queryString = [];
+    for (key in obj) {
+      var value = obj[key];
+      if (value === null) {
+        continue;
+      }
+      value = value.toString();
+      if (key.length > 0 && value.length > 0) {
+        queryString.push(key + '=' + obj[key]);
+      }
+    }
+    return queryString.join('&');
+  },
+
+  _getURL: function(options) {
+    var askType = options.askType;
     var host = this.getAjaxHost(this.profile);
+    var token = window.localStorage.token;
     var path = null;
-    switch (type) {
+    switch (askType) {
+      case 'FIRST_ASK':
+        path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
+          'benew_id': options.benewId,
+          'token': token,
+          'msg': options.question
+        });
+        break;
       case 'ASK':
-        path = 'bot/api/v1/botServer/sessionOperator/receiveh5?msg=' + question;
+        path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
+          'token': token,
+          'msg': options.question
+        });
         break;
       case 'REFRESH':
-        path = 'bot/api/v1/botServer/sessionOperator/flashh5?msg=' + question + 'refresh';
+        path = 'bot/api/v1/botServer/sessionOperator/flashh5?' + this.getQueryString({
+          'token': token,
+          'msg': options.question
+        });
         break;
     }
-    var token = window.localStorage.token;
-    return host + path + (token ? '&token=' + token : '');
+    return host + path;
   },
 
   // 函数节流, 避免同一个接口短时间内被重复调用
@@ -70,20 +99,19 @@ NetConnector.prototype = {
   },
 
   askServer: function(options, cb) {
-    var type = options.type;
-    var question = options.question;
-    switch (type) {
-      case 'ASK_HINT':
-        // this.getAskHint(cb);
+    var askType = options.askType;
+    switch (askType) {
+      case 'FIRST_ASK':
+        this._getSIRIAnswer(options, cb);
         break;
       case 'ASK':
-        this._getSIRIAnswer(type, question, cb);
+        this._getSIRIAnswer(options, cb);
         break;
       case 'REFRESH':
-        this._getSIRIAnswer(type, question, cb);
+        this._getSIRIAnswer(options, cb);
         break;
       default:
-        this._getSIRIAnswer(type, question, cb);
+        this._getSIRIAnswer(options, cb);
         // this.throttle(function() {
         //   this._getSIRIAnswer(question, cb);
         // }.bind(this));
@@ -91,7 +119,7 @@ NetConnector.prototype = {
     }
   },
 
-  _getSIRIAnswer: function(type, question, cb) {
+  _getSIRIAnswer: function(options, cb) {
     var self = this;
     // the data from server
     // var response = this.recommendAnswer;
@@ -150,8 +178,7 @@ NetConnector.prototype = {
       cb(null, formated_contents);
     };
 
-    var token = window.localStorage.token;
-    var url = this._getURL(type, question);
+    var url = this._getURL(options);
     $.output(url);
     $.ajax({
       url : url,

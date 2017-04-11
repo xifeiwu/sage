@@ -50,8 +50,8 @@
         return answerDom;
       }
       this.container.netConnector.askServer({
-        type: 'ASK',
-        question: 'recommend'
+        'askType': 'ASK',
+        'question': 'recommend'
       }, function(err, content) {
         // $.output(content);
         var resData = null;
@@ -137,6 +137,7 @@
 
   var BenewSIRI = function() {
     this.from = null === $.getQueryString('from') ? 'web' : $.getQueryString('from');
+    this.benewId = $.getQueryString('benew_id');
     this.env = $.getQueryString('env');
     this.cardCnt = 1;
     this.cardName = 'card_1';
@@ -288,8 +289,8 @@
           }
           var secode = quotationNode.dataset.code;
           this.netConnector.askServer({
-            type: 'REFRESH',
-            question: secode
+            'askType': 'REFRESH',
+            'question': secode
           }, function(err, formated_contents) {
             if (err) {
               return;
@@ -351,6 +352,7 @@
         }
       }.bind(this), 1000);
     },
+
     siriSay: function(content) {
       if (!content || content.length === 0) {
         return;
@@ -358,8 +360,9 @@
       content = content.trim();
       if (content.length > 0) {
         this.netConnector.askServer({
-          type: 'ASK',
-          question: content
+          'askType': 'FIRST_ASK',
+          'benewId': this.benewId,
+          'question': content
         }, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
@@ -375,6 +378,7 @@
         }.bind(this));
       }
     },
+
     askSIRI: function(question) {
       if (!question || question.length === 0) {
         return;
@@ -388,8 +392,8 @@
         // scroll ask first
         this.scrollAnimate();
         this.netConnector.askServer({
-          type: 'ASK',
-          question: question
+          'askType': 'ASK',
+          'question': question
         }, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
