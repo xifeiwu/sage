@@ -39,7 +39,7 @@ NetConnector.prototype = {
     var queryString = [];
     for (key in obj) {
       var value = obj[key];
-      if (value === null) {
+      if (value === null || value === undefined) {
         continue;
       }
       value = value.toString();
