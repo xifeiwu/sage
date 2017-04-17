@@ -1,3 +1,4 @@
+/* jshint ignore:start */
 'use strict';
 ! function(e) {
   e.extend(e, {
@@ -193,3 +194,4 @@
     },
   })
 }(Zepto);
+/* jshint ignore:end */

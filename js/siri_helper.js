@@ -2,7 +2,7 @@
 var NetConnector = function(headers) {
   this.profile = 'uat';
   this.ajaxHeaders = headers;
-  this.ajaxHeaders.token = window.localStorage.token
+  this.ajaxHeaders.token = window.localStorage.token;
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,
@@ -41,7 +41,7 @@ NetConnector.prototype = {
   getQueryString: function(params) {
     var queryString = [];
     var generator = function(obj) {
-      for (key in obj) {
+      for (var key in obj) {
         var value = obj[key];
         if (value === null || value === undefined) {
           continue;
@@ -51,7 +51,7 @@ NetConnector.prototype = {
           queryString.push(key + '=' + obj[key]);
         }
       }
-    }
+    };
     generator(this.ajaxHeaders);
     generator(params);
     return queryString.join('&');

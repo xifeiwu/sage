@@ -1,5 +1,5 @@
 'use strict';
-! function() {
+(function() {
   var SIRIAskHint = function(container) {
     this.container = container;
     this.askHintDOM = $('#siri_ask_hint');
@@ -14,11 +14,15 @@
       if (showMe) {
         this.askHintDOM.removeClass('hidden');
         this.askHintDOM.addClass('show');
-        this.mySwiper.startSlide && this.mySwiper.startSlide();
+        if (this.mySwiper.startSlide) {
+          this.mySwiper.startSlide();
+        }
       } else {
         this.askHintDOM.removeClass('show');
         this.askHintDOM.addClass('hidden');
-        this.mySwiper.stopSlide && this.mySwiper.stopSlide();
+        if (this.mySwiper.stopSlide) {
+          this.mySwiper.stopSlide();
+        }
       }
     },
     initDOM: function() {
@@ -100,7 +104,9 @@
           swiper.activeId = nextId;
         };
         swiper.slideNextManually = function() {
-          swiper.interVal && clearInterval(swiper.interVal);
+          if (swiper.interVal) {
+            clearInterval(swiper.interVal);
+          }
           swiper.slideNext();
           swiper.startSlide();
         };
@@ -110,7 +116,9 @@
           swiper.interVal = setInterval(swiper.slideNext, 3000);
         };
         swiper.stopSlide = function() {
-          swiper.interVal && clearInterval(swiper.interVal);
+          if (swiper.interVal) {
+            clearInterval(swiper.interVal);
+          }
           Array.prototype.slice.call(swiper.swiperSlides).forEach(function(it) {
             it.classList.remove('swiper-slide-active');
           });
@@ -126,13 +134,15 @@
         this.show(false);
       }.bind(this));
       $.touchEvent(this.askHintDOM, '.btn_change_wrapper .btn_change', function() {
-        this.mySwiper.slideNextManually && this.mySwiper.slideNextManually();
+        if (this.mySwiper.slideNextManually) {
+          this.mySwiper.slideNextManually();
+        }
       }.bind(this));
       $.touchEvent(this.askHintDOM, '.btn_close_wrapper .btn_close', function() {
         this.show(false);
       }.bind(this));
     }
-  }
+  };
 
 
   var BenewSIRI = function() {
@@ -149,7 +159,7 @@
     var env = this.getEnv();
     this.theme = env[0];
     this.from = env[1];
-    this.netConnector = new NetConnector({
+    this.netConnector = new window.NetConnector({
       from: this.from
     });
     this.answerStyle = this.netConnector.answerStyle;
@@ -176,7 +186,7 @@
         (typeof (window.webkit) !== 'undefined' &&
         typeof (window.webkit.messageHandlers) !== 'undefined' &&
         typeof (window.webkit.messageHandlers.addiOSTrackEvent) !== 'undefined');
-      self.inApp = self.inWechat ? false : self.inApp;
+      inApp = inWechat ? false : inApp;
       var platform = /iPhone/.test(window.navigator.userAgent) ? 'iOS' : (/Android/.test(window.navigator.userAgent) ? 'Android' : 'other');
       
       var theme = $.getQueryString('from');
@@ -189,7 +199,7 @@
       if (inApp) {
         from = 'app';
       } else if (inWechat) {
-        from = 'wechat'
+        from = 'wechat';
       }
       return [theme, from];
     },
@@ -314,11 +324,10 @@
         } else {
           $.output('the same: pchg.');
         }
-
       };
       Array.prototype.slice.call(document.querySelectorAll('#stock_quotation')).forEach(function(quotationNode) {
-        if (! $.isElementNotInViewport(quotationNode)) {
-          if (! 'code' in quotationNode.dataset) {
+        if (!$.isElementNotInViewport(quotationNode)) {
+          if (!('code' in quotationNode.dataset)) {
             return;
           }
           var secode = quotationNode.dataset.code;
@@ -362,10 +371,10 @@
           } else {
             tagSageSay = {
               'readme': '记录sage主动询问的状态'
-            }
+            };
           }
           // the first tip
-          if (!'date' in tagSageSay) {
+          if (!('date' in tagSageSay)) {
             tagSageSay.date = today;
             tagSageSay.sayTimes = 1;
             this.siriSay('firstTip');
@@ -449,8 +458,9 @@
       }
     },
     createAnswerDOM: function(options) {
-      var answerDom = '';
       $.output(options);
+      var answerDom = '';
+      var content = null;
       switch (options.style) {
         case this.answerStyle.WAITING:
           answerDom = 
@@ -476,7 +486,7 @@
           answerDom = '<div class="ans_box" id="stock_forecast">' + options.content + '</div>';
           break;
         case this.answerStyle.STOCK_QUOTATION:
-          var content = options.content;
+          content = options.content;
           answerDom = 
           '<div class="ans_box" id="stock_quotation" data-code="' + content.tradeCode + '">' +
             '<div class="header">' +
@@ -518,13 +528,13 @@
           '</div>';
           break;
         case this.answerStyle.HOT_STOCKS:
-          var content = options.content;
+          content = options.content;
           var tableContent = content.stocks.map(function(it) {
             return '<tr><td><span class="stock_name">' + it.name + 
               '</span>&nbsp<span class="stock_code">' + it.code + '</span></td>' +
               '<td>' + it.topen + '</td><td class="pchg ' + it.pchg_state +'">' + it.formated_pchg + '</td></tr>';
           }).join('');
-          var answerDom = 
+          answerDom = 
           '<div class="ans_box" id="hot_stocks">' +
             '<div class="header">会牛智选</div>' +
             '<div class="content">' +
@@ -547,7 +557,7 @@
 
     limitCardNumb: function() {
       var e = 16,
-        t = $(".card");
+        t = $('.card');
       if (t.length > e) {
         for (var s = 0, i = t.length - e; s < i; s++) {
           $(t[s]).remove();
@@ -578,10 +588,10 @@
           });
           break;
       }
-      if ('selectStockTips' == options.type) {
+      if ('selectStockTips' === options.type) {
         askDom = '';
         answerDom = this.createAnswerDOM(options);
-      } else if ('onlyAnswer' == options.type) {
+      } else if ('onlyAnswer' === options.type) {
         askDom = '';
         answerDom = this.createAnswerDOM(options);
       }
@@ -691,18 +701,26 @@
       location.href = e.url;
     },
     createIframe: function(e) {
-      var t = e.url,
-        s = $(window).width() - 50 - 26,
-        i = document.createElement('iframe');
-      return i.name = e.cardName, i.setAttribute('style', 'visibility:hidden;overflow: hidden;'), i.setAttribute('width', s), i.setAttribute('border', 'none'), i.setAttribute('frameborder', 'no'), i.setAttribute('src', t), i.onerror = function() {}, i
+      var t = e.url;
+      var s = $(window).width() - 50 - 26;
+      var i = document.createElement('iframe');
+      i.name = e.cardName;
+      i.setAttribute('style', 'visibility:hidden;overflow: hidden;');
+      i.setAttribute('width', s);
+      i.setAttribute('border', 'none');
+      i.setAttribute('frameborder', 'no');
+      i.setAttribute('src', t);
+      i.onerror = function() {};
+      return i;
     },
     showIframe: function(e) {
-      var t = $(window).width() - 50 - 26,
-        s = document.getElementsByName(e.cardName)[0];
+      var t = $(window).width() - 50 - 26;
+      var s = document.getElementsByName(e.cardName)[0];
       $(s.contentWindow.document.body).width(t + 'px');
-      var i = this;
+      var self = this;
       setTimeout(function() {
-        i.updateIframe(e), $(s).attr('style', 'visibility：visible;overflow: hidden;');
+        self.updateIframe(e);
+        $(s).attr('style', 'visibility：visible;overflow: hidden;');
       }, 10);
     },
     updateIframe: function(e) {
@@ -711,11 +729,14 @@
         var s = document.getElementsByName(t)[0],
           i = $(s.contentWindow.document.body)[0].offsetHeight + 12,
           a = $(window).width() - 50 - 26;
-        $(s.contentWindow.document.body).width(a + 'px'), $(s).attr('height', i), $(s).attr('width', a), this.bottomDiv(e);
+        $(s.contentWindow.document.body).width(a + 'px');
+        $(s).attr('height', i);
+        $(s).attr('width', a);
+        this.bottomDiv(e);
       }
     },
   };
   var benewSIRI = new BenewSIRI();
   benewSIRI.init();
   window.benewSIRI = benewSIRI;
-}();
+})();
