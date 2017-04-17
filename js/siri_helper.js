@@ -1,6 +1,8 @@
 'use strict';
-var NetConnector = function() {
+var NetConnector = function(headers) {
   this.profile = 'uat';
+  this.ajaxHeaders = headers;
+  this.ajaxHeaders.token = window.localStorage.token
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,
@@ -14,8 +16,9 @@ var NetConnector = function() {
 
 NetConnector.prototype = {
   setToken: function(token) {
-    if (token && localStorage.token !== token) {
+    if (token && window.localStorage.token !== token) {
       window.localStorage.token = token;
+      this.ajaxHeaders.token = token;
     }
   },
 
@@ -35,18 +38,22 @@ NetConnector.prototype = {
     return host;
   },
 
-  getQueryString: function(obj) {
+  getQueryString: function(params) {
     var queryString = [];
-    for (key in obj) {
-      var value = obj[key];
-      if (value === null || value === undefined) {
-        continue;
-      }
-      value = value.toString();
-      if (key.length > 0 && value.length > 0) {
-        queryString.push(key + '=' + obj[key]);
+    var generator = function(obj) {
+      for (key in obj) {
+        var value = obj[key];
+        if (value === null || value === undefined) {
+          continue;
+        }
+        value = value.toString();
+        if (key.length > 0 && value.length > 0) {
+          queryString.push(key + '=' + obj[key]);
+        }
       }
     }
+    generator(this.ajaxHeaders);
+    generator(params);
     return queryString.join('&');
   },
 
@@ -59,19 +66,16 @@ NetConnector.prototype = {
       case 'FIRST_ASK':
         path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
           'benew_id': options.benewId,
-          'token': token,
           'msg': options.question
         });
         break;
       case 'ASK':
         path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
-          'token': token,
           'msg': options.question
         });
         break;
       case 'REFRESH':
         path = 'bot/api/v1/botServer/sessionOperator/flashh5?' + this.getQueryString({
-          'token': token,
           'msg': options.question
         });
         break;
@@ -186,6 +190,7 @@ NetConnector.prototype = {
       contentType : 'application/json;charset=utf-8',
       dataType : 'json',
       timeout: 12000,
+      headers: this.ajaxHeaders,
       success : function(response) {
         $.output(response);
         if (parseInt(response.code) === 0) {
@@ -226,6 +231,7 @@ NetConnector.prototype = {
     body.link = predictLinks[0];
     return body;
   },
+
   _formatStockQuotation: function(data) {
     var body = data.body;
     var predictLinks = data.predictLinks;

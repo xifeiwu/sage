@@ -136,9 +136,7 @@
 
 
   var BenewSIRI = function() {
-    this.from = null === $.getQueryString('from') ? 'web' : $.getQueryString('from');
     this.benewId = $.getQueryString('benew_id');
-    this.env = $.getQueryString('env');
     this.cardCnt = 1;
     this.cardName = 'card_1';
     this.dialogWrapper = document.getElementById('dialog_wrapper');
@@ -148,14 +146,21 @@
       // 'SIRI_ASK_HINT': 2,
       'USER_ASK': 3,
     };
-    this.netConnector = new NetConnector();
+    var env = this.getEnv();
+    this.theme = env[0];
+    this.from = env[1];
+    this.netConnector = new NetConnector({
+      from: this.from
+    });
     this.answerStyle = this.netConnector.answerStyle;
     this.sageSayCnt = 0;
   };
   BenewSIRI.prototype = {
     init: function() {
-      $('#main').addClass(this.from);
-      $('#siri_ask_hint').addClass(this.from);
+      if (this.theme) {
+        $('#main').addClass(this.theme);
+        $('#siri_ask_hint').addClass(this.theme);
+      }
       this.siriAskHint = new SIRIAskHint(this);
       this.addEvent();
       this.siriSay('hi');
@@ -164,6 +169,31 @@
         'token': window.localStorage.token
       });
     },
+
+    getEnv: function() {
+      var inWechat = window.navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
+      var inApp = (typeof (window.android) !== 'undefined' && typeof (window.android.addEvent) !== 'undefined') ||
+        (typeof (window.webkit) !== 'undefined' &&
+        typeof (window.webkit.messageHandlers) !== 'undefined' &&
+        typeof (window.webkit.messageHandlers.addiOSTrackEvent) !== 'undefined');
+      self.inApp = self.inWechat ? false : self.inApp;
+      var platform = /iPhone/.test(window.navigator.userAgent) ? 'iOS' : (/Android/.test(window.navigator.userAgent) ? 'Android' : 'other');
+      
+      var theme = $.getQueryString('from');
+      if (!theme) {
+        if (inApp) {
+          theme = 'app';
+        }
+      }
+      var from = null;
+      if (inApp) {
+        from = 'app';
+      } else if (inWechat) {
+        from = 'wechat'
+      }
+      return [theme, from];
+    },
+
     addEvent: function() {
       $('#input_bar .btn_go').on('click', function() {
         var inputBar = $('#input_bar input');
@@ -214,6 +244,7 @@
       //   console.log('transitionend');
       // });
     },
+
     refreshStockQuotationInViewport: function() {
       var updateStockQuotationNode = function(node, item) {
         var content = item.content;
@@ -307,9 +338,11 @@
         }
       }.bind(this));
     },
+
     resetSageSayCnt: function() {
       this.sageSayCnt = 0;
     },
+
     startHeartBeat: function() {
       var stockQuotationCnt = 0;
       $.output('start interval');
@@ -410,6 +443,7 @@
             return this.createAnswerDOM(it);
           }.bind(this)).join('');
           cardNode.append($(answerDOM));
+          // scroll answer
           this.scrollAnimate();
         }.bind(this));
       }
