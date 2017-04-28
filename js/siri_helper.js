@@ -131,8 +131,13 @@ NetConnector.prototype = {
     // var response = this.quotationAnswer;
     var successCB = function(response) {
       self.setToken(response.token);
+      var dt = null;
+      if ('dt' in response) {
+        dt = $.formatDate(new Date(response.dt), 'yyyy-MM-dd');
+      }
       var contents = response.content;
       var formated_contents = [];
+      formated_contents.dt = dt;
       for (var i = 0; i < contents.length; i++) {
         var content = contents[i];
         if ('type' in content) {
