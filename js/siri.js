@@ -147,8 +147,8 @@
 
   var BenewSage = function() {
     this.benewId = $.getQueryString('benew_id');
-    this.cardCnt = 0;
-    this.curCardID = '';
+    // used to follow last card id.
+    this.curCardID = null;
     this.dialogWrapper = document.getElementById('dialog_wrapper');
     this.wrapperHeight = $(this.dialogWrapper).height();
     this.cardStyle = {
@@ -164,6 +164,7 @@
     });
     this.answerStyle = this.netConnector.answerStyle;
     this.sageSayCnt = 0;
+    this.chatHistory = null;
   };
   BenewSage.prototype = {
     init: function() {
@@ -172,6 +173,7 @@
         $('#siri_ask_hint').addClass(this.theme);
       }
       this.siriAskHint = new SIRIAskHint(this);
+      this.getChatHistory();
       this.addEvent();
       this.siriSay('hi');
       this.startHeartBeat();
@@ -249,10 +251,56 @@
         window.location.hash = '';
       });
 
+      // window.addEventListener('load', function() {
+      //   console.log(new Date().getTime());
+      // });
+      window.addEventListener('beforeunload', function() {
+        this.saveChatHistory();
+      }.bind(this));
+
       // can not be triggered
       // $('.ans_box .content .price .trade_price').on('transitionend webkitTransitionEnd oTransitionEnd', function(evt) {
       //   console.log('transitionend');
       // });
+    },
+
+    getChatHistory: function() {
+      if ('chatHistory' in window.localStorage) {
+        chatHistory = JSON.parse(window.localStorage.chatHistory);
+        if (Array.isArray(chatHistory)) {
+          this.chatHistory = chatHistory.filter(function(item) {
+            return 'id' in item && 'text' in item && typeof(item.id) === 'number' && item.text.length > 0;
+          })
+          .sort(function(it1, it2) {
+            return it1.id - it2.id;
+          });
+        } else {
+          this.chatHistory = [];
+        }
+      } else {
+        this.chatHistory = [];
+      }
+      if (this.chatHistory.length > 0) {
+        this.chatHistory.forEach(function(it) {
+          $(it.text).insertBefore($('#bottomDiv'));
+        });
+      }
+    },
+
+    saveChatHistory: function() {
+      if (Array.isArray(this.chatHistory)) {
+        var maxDuration = 2 * 24 * 3600 * 1000;
+        var lastTime = this.chatHistory[this.chatHistory.length - 1].id;
+        var chatHistory = this.chatHistory.filter(function(it) {
+          var inTwoDays = lastTime - it.id < maxDuration;
+          var isUserAsk = $(it.text).data('style') === 'user_ask';
+          return inTwoDays && isUserAsk;
+        })
+        .sort(function(it1, it2) {
+          return it1.id - it2.id;
+        });
+         window.localStorage.chatHistory = JSON.stringify(chatHistory);
+      }
     },
 
     siriSay: function(content) {
@@ -289,20 +337,20 @@
       }
       cardType = cardType ? cardType : this.cardStyle.USER_ASK;
       question = question.trim();
-      askParams = null
+      var askParams = null;
       switch (cardType) {
         case this.cardStyle.SIRI_SAY:
           askParams = {
             'askType': 'FIRST_ASK',
             'benewId': this.benewId,
             'question': question
-          }
+          };
           break;
         case this.cardStyle.USER_ASK:
           askParams = {
             'askType': 'ASK',
             'question': question
-          }
+          };
           break;
       }
       if (question.length > 0) {
@@ -326,9 +374,14 @@
           }.bind(this)).join('');
           cardNode.append($(answerDOM));
           if ('dt' in formated_contents) {
-            cardNode.data('date', formated_contents.dt)
+            cardNode.attr('id', formated_contents.dt);
+            this.curCardID = formated_contents.dt;
           }
-          console.log(cardNode.prop('outerHTML'));
+          this.chatHistory.push({
+            'id': formated_contents.dt,
+            'text': cardNode.prop('outerHTML')
+          });
+          // console.log(this.chatHistory);
           // scroll answer
           this.scrollAnimate();
         }.bind(this));
@@ -450,27 +503,29 @@
      */
     createCard: function(options) {
       // this.limitCardNumb();
-      this.cardCnt += 1;
-      var cardID = 'card_' + this.cardCnt;
       var askDOM = '';
       var answerDOM = '';
+      var cardStyle = '';
       switch (options.type) {
         case this.cardStyle.SIRI_SAY:
+          cardStyle = 'siri_say';
           askDOM = '';
           answerDOM = this.createAnswerDOM({
             style: this.answerStyle.WAITING,
           });
         break;
         case this.cardStyle.USER_ASK:
+          cardStyle = 'user_ask';
           askDOM = '<div class="ask_row"><span>' + options.content + '</span></div>';
           answerDOM = this.createAnswerDOM({
             style: this.answerStyle.WAITING,
           });
           break;
       }
-      var card = $('<div id="' + cardID + '" class="card" style="overflow: hidden;">' + askDOM + answerDOM + '</div>');
+      var randomID = parseInt(Math.random() * 1000000).toString();
+      var card = $('<div id="' + randomID + '" class="card" data-style="' + cardStyle + '" style="overflow: hidden;">' + askDOM + answerDOM + '</div>');
       card.insertBefore($('#bottomDiv'));
-      this.curCardID = cardID;
+      this.curCardID = randomID;
       return card;
     },
 
@@ -481,7 +536,6 @@
     scrollAnimate: function() {
       var scrollTop = false;
       if (scrollTop) {
-        this.bottomDiv();
         this.scrollTopAnimate();
       } else {
         this.scrollBottomAnimate();
@@ -501,6 +555,7 @@
     },
 
     scrollTopAnimate: function(e) {
+      this.bottomDiv();
       var self = this;
       var goOn = true,
         timeUsed = 300,

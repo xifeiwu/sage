@@ -133,7 +133,8 @@ NetConnector.prototype = {
       self.setToken(response.token);
       var dt = null;
       if ('dt' in response) {
-        dt = $.formatDate(new Date(response.dt), 'yyyy-MM-dd');
+        dt = response.dt;
+        // dt = $.formatDate(new Date(response.dt), 'yyyy-MM-dd');
       }
       var contents = response.content;
       var formated_contents = [];
