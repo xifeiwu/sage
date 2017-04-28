@@ -164,6 +164,7 @@
     });
     this.answerStyle = this.netConnector.answerStyle;
     this.sageSayCnt = 0;
+    this.tagSaveChatHistory = true;
     this.chatHistory = null;
   };
   BenewSage.prototype = {
@@ -173,7 +174,9 @@
         $('#siri_ask_hint').addClass(this.theme);
       }
       this.siriAskHint = new SIRIAskHint(this);
-      this.getChatHistory();
+      if (this.tagSaveChatHistory) {
+        this.getChatHistory();
+      }
       this.addEvent();
       this.siriSay('hi');
       this.startHeartBeat();
@@ -251,11 +254,22 @@
         window.location.hash = '';
       });
 
+      $.touchEvent($('a[href]'), function(evt) {
+        target = evt.target;
+        console.log(target.href);
+      });
+      $('a[href]').on('click', function(evt) {
+        console.log(evt);
+        evt.preventDefault();
+        evt.stopPropagation();
+      })
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
       // });
-      window.addEventListener('beforeunload', function() {
-        this.saveChatHistory();
+      window.addEventListener('beforeunload', function(evt) {
+        if (this.tagSaveChatHistory) {
+          this.saveChatHistory();
+        }
       }.bind(this));
 
       // can not be triggered
@@ -377,10 +391,12 @@
             cardNode.attr('id', formated_contents.dt);
             this.curCardID = formated_contents.dt;
           }
-          this.chatHistory.push({
-            'id': formated_contents.dt,
-            'text': cardNode.prop('outerHTML')
-          });
+          if (this.tagSaveChatHistory) {
+            this.chatHistory.push({
+              'id': formated_contents.dt,
+              'text': cardNode.prop('outerHTML')
+            });
+          }
           // console.log(this.chatHistory);
           // scroll answer
           this.scrollAnimate();
