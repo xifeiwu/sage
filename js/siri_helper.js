@@ -1,6 +1,6 @@
 'use strict';
 var NetConnector = function(headers) {
-  this.profile = 'uat_ip';
+  this.profile = 'uat';
   this.ajaxHeaders = headers;
   this.ajaxHeaders.token = window.localStorage.token;
   this.answerStyle = {
