@@ -90,12 +90,14 @@
     mobileConsole: function(msg) {
       console.log(msg);
     },
+
     output: function(msg) {
-      if (false) {
-        console.log(msg);
+      if (true) {
+        console.log(JSON.stringify(msg));
       }
     },
-    toLocaleFormat: function(date, fmt) {
+
+    formatDate: function(date, fmt) {
       var o = {
         'M+': date.getMonth() + 1, //月份
         'd+': date.getDate(), //日
@@ -115,6 +117,7 @@
       }
       return fmt;
     },
+
     isElementNotInViewport: function(el) {
       var isInViewport = true;
       var rect = el.getBoundingClientRect();
@@ -132,6 +135,7 @@
       }
       return !isInViewport;
     },
+
     weixinSDKRegister: function(t) {
       if ('undefined' !== typeof wx && ('web' === e.getQueryString('dt_from') || 'nod' === e.getQueryString('dt_from'))) {
         var n = location.href,

@@ -148,7 +148,7 @@
   var BenewSIRI = function() {
     this.benewId = $.getQueryString('benew_id');
     this.cardCnt = 1;
-    this.cardName = 'card_1';
+    this.curCardID = 'card_1';
     this.dialogWrapper = document.getElementById('dialog_wrapper');
     this.wrapperHeight = $(this.dialogWrapper).height();
     this.cardStyle = {
@@ -359,12 +359,11 @@
         stockQuotationCnt += 1;
         if (stockQuotationCnt > 6) {
           stockQuotationCnt = 0;
-          this.refreshStockQuotationInViewport();
+          // this.refreshStockQuotationInViewport();
         }
         this.sageSayCnt += 1;
-        // $.output(this.sageSayCnt);
         if (this.sageSayCnt > 30) {
-          var today = $.toLocaleFormat(new Date(), 'yyyy-MM-dd');
+          var today = $.formatDate(new Date(), 'yyyy-MM-dd');
           var tagSageSay = null;
           if (window.localStorage.tagSageSay) {
             tagSageSay = JSON.parse(window.localStorage.tagSageSay);
@@ -424,6 +423,7 @@
       }
     },
 
+    // logic: createCard -> createAskDOM -> createAnswerDOM
     askSIRI: function(question) {
       if (!question || question.length === 0) {
         return;
@@ -457,6 +457,7 @@
         }.bind(this));
       }
     },
+
     createAnswerDOM: function(options) {
       $.output(options);
       var answerDom = '';
@@ -564,17 +565,22 @@
         }
       }
     },
+
+    /**
+     * card stands for conversion:
+     * 1. sage say
+     * 2. user ask, sage say
+     */
     createCard: function(options) {
-      this.limitCardNumb();
+      // this.limitCardNumb();
       this.cardCnt += 1;
-      this.cardName = 'card_' + this.cardCnt;
-      var askDom = '';
-      var answerDom = '';
+      var cardID = 'card_' + this.cardCnt;
+      var askDOM = '';
+      var answerDOM = '';
       switch (options.type) {
         case this.cardStyle.SIRI_SAY:
-          askDom = '';
-          var contents = options.content;
-          answerDom = contents.map(function(it) {
+          askDOM = '';
+          answerDOM = options.content.map(function(it) {
             return this.createAnswerDOM({
               style: it.style,
               content: it.content
@@ -582,36 +588,29 @@
           }.bind(this)).join('');
         break;
         case this.cardStyle.USER_ASK:
-          askDom = '<div class="ask_row"><span>' + options.content + '</span></div>';
-          answerDom = this.createAnswerDOM({
+          askDOM = '<div class="ask_row"><span>' + options.content + '</span></div>';
+          answerDOM = this.createAnswerDOM({
             style: this.answerStyle.WAITING,
           });
           break;
       }
-      if ('selectStockTips' === options.type) {
-        askDom = '';
-        answerDom = this.createAnswerDOM(options);
-      } else if ('onlyAnswer' === options.type) {
-        askDom = '';
-        answerDom = this.createAnswerDOM(options);
-      }
-      var card = $('<div id="' + this.cardName + '" class="card" style="overflow: hidden;">' + askDom + answerDom + '</div>');
-      card.insertBefore($('#bottomDiv'));
-      // if ("firstTips" != options.type && "onlyAnswer" != options.type && "selectStockTips" != options.type) {
-      // } else {
-      //   this.bottomDiv({
-      //     cardName: this.cardName
-      //   });
-      //   this.scrollTopAnimate({
-      //     cardName: this.cardName,
-      //     callBack: function() {}
-      //   });
+      // if ('selectStockTips' === options.type) {
+      //   askDOM = '';
+      //   answerDOM = this.createAnswerDOM(options);
+      // } else if ('onlyAnswer' === options.type) {
+      //   askDOM = '';
+      //   answerDOM = this.createAnswerDOM(options);
       // }
+      var card = $('<div id="' + cardID + '" class="card" style="overflow: hidden;">' + askDOM + answerDOM + '</div>');
+      card.insertBefore($('#bottomDiv'));
+      this.curCardID = cardID;
       return card;
     },
+
     hideLoading: function(cardNode) {
       cardNode.find('.answer_row .ans_cont .ans_box .dots_loading').closest('.answer_row').remove();
     },
+
     scrollAnimate: function() {
       var scrollTop = false;
       if (scrollTop) {
@@ -621,8 +620,9 @@
         this.scrollBottomAnimate();
       }
     },
+
     bottomDiv: function() {
-      var curCard = $('#' + this.cardName);
+      var curCard = $('#' + this.curCardID);
       var cardHeight = curCard.height();
       var bootomHeight = this.wrapperHeight - cardHeight;
       if ((this.wrapperHeight - cardHeight) > 0) {
@@ -632,11 +632,12 @@
       }
       $('#bottomDiv').css('height', bootomHeight);
     },
+
     scrollTopAnimate: function(e) {
       var self = this;
       var goOn = true,
         timeUsed = 300,
-        cardTop = document.getElementById(this.cardName).offsetTop,
+        cardTop = document.getElementById(this.curCardID).offsetTop,
         wrapperTop = this.dialogWrapper.scrollTop,
         interval = 40,
         step = (cardTop - wrapperTop) / timeUsed * interval;
@@ -666,7 +667,7 @@
       var self = this;
       var timeUsed = 300;
       var  interval = 40;
-      var cardDOM = document.getElementById(this.cardName);
+      var cardDOM = document.getElementById(this.curCardID);
       var cardTop = cardDOM.offsetTop;
       var cardBottom = cardTop + cardDOM.clientHeight;
       var wrapperTop = this.dialogWrapper.scrollTop;

@@ -1,6 +1,6 @@
 'use strict';
 var NetConnector = function(headers) {
-  this.profile = 'product';
+  this.profile = 'uat_ip';
   this.ajaxHeaders = headers;
   this.ajaxHeaders.token = window.localStorage.token;
   this.answerStyle = {
@@ -97,7 +97,7 @@ NetConnector.prototype = {
           method.call(null);
         }
       } catch (e) {
-        console.log(e);
+        window.console.log(e);
       }
     }, 300);
   },
@@ -209,7 +209,7 @@ NetConnector.prototype = {
     var body = data.body;
     var predictLinks = data.predictLinks;
     var date = body.date;
-    body.date = $.toLocaleFormat(new Date(date), 'yyyy.MM.dd');
+    body.date = $.formatDate(new Date(date), 'yyyy.MM.dd');
     body.stocks.forEach(function(it) {
       var topen = parseFloat(it.topen);
       var pchg = parseFloat(it.pchg) * 100;
