@@ -75,21 +75,17 @@
     },
     getEnvironments: function() {
       var inWechat = window.navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
+      var platform = null;
+      if (/iPhone/.test(window.navigator.userAgent)) {
+        platform = 'iOS';
+      } else if (/Android/.test(window.navigator.userAgent)) {
+        platform = 'Android';
+      }
       var inApp = (typeof (window.android) !== 'undefined' && typeof (window.android.addEvent) !== 'undefined') ||
         (typeof (window.webkit) !== 'undefined' &&
         typeof (window.webkit.messageHandlers) !== 'undefined' &&
         typeof (window.webkit.messageHandlers.addiOSTrackEvent) !== 'undefined');
       inApp = inWechat ? false : inApp;
-      var platform = null;
-      if (inWechat) {
-        platform = 'wechat';
-      } else if (inApp) {
-        if (/iPhone/.test(window.navigator.userAgent)) {
-          platform = 'iOS';
-        } else if (/Android/.test(window.navigator.userAgent)) {
-          platform = 'Android';
-        }
-      }
 
       if (platform === 'iOS' && window.BenewiOS && window.BenewiOS['appInfo'] && window.BenewiOS['appInfo'].length > 0) {
         isInApp = true;
