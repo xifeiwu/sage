@@ -88,7 +88,7 @@
       inApp = inWechat ? false : inApp;
 
       if (platform === 'iOS' && window.BenewiOS && window.BenewiOS['appInfo'] && window.BenewiOS['appInfo'].length > 0) {
-        isInApp = true;
+        inApp = true;
       }
 
       return {
