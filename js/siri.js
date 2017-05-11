@@ -240,7 +240,7 @@
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
       // });
-      window.addEventListener('beforeunload', function(evt) {
+      window.addEventListener(this.platform === 'iOS' ? 'pagehide' : 'beforeunload', function(evt) {
         if (this.tagSaveChatHistory) {
           this.saveChatHistory();
         }
