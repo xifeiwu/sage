@@ -272,30 +272,29 @@
         console.log(path);
         console.log(this.platform);
         switch (path) {
-          case 'app/event-driven/event-driven.html':
-            if (this.platform === 'Android') {
-              window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
-            } else if (this.platform === 'iOS') {
-              window.webkit.messageHandlers.gotoEventDriven.postMessage({});
-            }
-            break;
-          case 'app/long/long.html':
-            if (this.platform === 'Android') {
-              window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
-            } else if (this.platform === 'iOS') {
-              window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
-            }
-            break;
-          case 'app/short/short.html':
-            if (this.platform === 'Android') {
-              window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
-            } else if (this.platform === 'iOS') {
-              window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
-            }
-            break;
+          // case 'app/event-driven/event-driven.html':
+          //   if (this.platform === 'Android') {
+          //     window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
+          //   } else if (this.platform === 'iOS') {
+          //     window.webkit.messageHandlers.gotoEventDriven.postMessage({});
+          //   }
+          //   break;
+          // case 'app/long/long.html':
+          //   if (this.platform === 'Android') {
+          //     window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
+          //   } else if (this.platform === 'iOS') {
+          //     window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
+          //   }
+          //   break;
+          // case 'app/short/short.html':
+          //   if (this.platform === 'Android') {
+          //     window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
+          //   } else if (this.platform === 'iOS') {
+          //     window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
+          //   }
+          //   break;
           default:
             if (this.platform === 'Android') {
-              // window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
               window.android.gotoWebActivity(url, '');
             } else if (this.platform === 'iOS') {
               window.webkit.messageHandlers.openUrl.postMessage({targetUrl: url});
