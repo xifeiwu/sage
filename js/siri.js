@@ -340,14 +340,19 @@
       }
     },
 
-    // event pagehide is not support so well in ios.
+    /**
+     * only the card user ask with server answer be saved to localStorage, this rule is implemnted in function: askSIRI, saveChatHistory.
+     * saveChatHistory is called in two place:
+     * 1. pagehide callback
+     * 2. askSIRI, as event pagehide is not support so well in ios
+     */
     saveChatHistory: function() {
-      window.localStorage.here1 = this.chatHistory.length;
       if (Array.isArray(this.chatHistory)) {
         var maxDuration = 2 * 24 * 3600 * 1000;
         var lastTime = this.chatHistory[this.chatHistory.length - 1].id;
         var chatHistory = this.chatHistory.filter(function(it) {
           var inTwoDays = lastTime - it.id < maxDuration;
+          // only user asked card is saved.
           var isUserAsk = $(it.text).data('style') === 'user_ask';
           return inTwoDays && isUserAsk;
         })
@@ -355,7 +360,6 @@
           return it1.id - it2.id;
         });
         window.localStorage.chatHistory = JSON.stringify(chatHistory);
-        window.localStorage.here2 = this.chatHistory.length;
       }
     },
 
@@ -434,7 +438,8 @@
             cardNode.attr('id', formated_contents.dt);
             this.curCardID = formated_contents.dt;
           }
-          if (this.tagSaveChatHistory) {
+
+          if (this.tagSaveChatHistory && !err) {
             this.chatHistory.push({
               'id': formated_contents.dt,
               'text': cardNode.prop('outerHTML')
