@@ -49,74 +49,90 @@ This is the front-end part of project sage.
 
 ## APP交互
 
-股票池
+1. 事件驱动<https://m.benew.com.cn/app/event-driven/event-driven.html>
 
-    if (self.platform === 'Android') {
-      window.android.gotoStockPool();
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.gotoStockPool.postMessage({});
-    }
-
-短线机会
-
-    if (self.platform === 'Android') {
-      window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
-    }
-
-中长线机会
-
-    if (self.platform === 'Android') {
-      window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
-    }
-
-事件驱动
-
+  ```
     if (self.platform === 'Android') {
       window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
     } else if (self.platform === 'iOS') {
       window.webkit.messageHandlers.gotoEventDriven.postMessage({});
     }
+```
 
-看涨榜
+1. 短线机会<https://m.benew.com.cn/app/short/short.html>
 
-    if (self.platform === 'Android') {
-      var url = window.__env.getOrigin() + '/#/rank/up';
-      var title = '看涨榜';
-      window.android.gotoWebActivity(url, title);
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.riseRank.postMessage({});
-    }
+  ```
+if (self.platform === 'Android') {
+  window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
+}
+```
 
-预测榜
+1. 中长线机会<https://m.benew.com.cn/app/long/long.html>
 
-    if (self.platform === 'Android') {
-      var url = window.__env.getOrigin() + '/#/rank/forecast';
-      var title = '预测榜';
-      window.android.gotoWebActivity(url, title);
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.forecastRank.postMessage({});
-    }
+  ```
+if (self.platform === 'Android') {
+  window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
+}
+```
 
-热议飙升
+1. 股票池<https://m.benew.com.cn/app/stockpool-v2/stockpool.html>
 
-    if (self.platform === 'Android') {
-      var url = window.__env.getOrigin() + '/#/rank/hotrise';
-      var title = '热议飙升';
-      window.android.gotoWebActivity(url, title);
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.gotoHotRise.postMessage({});
-    }
+  ```
+  if (self.platform === 'Android') {
+    window.android.gotoStockPool();
+  } else if (self.platform === 'iOS') {
+    window.webkit.messageHandlers.gotoStockPool.postMessage({});
+  }
+  ```
 
-全网热议
+1. 看涨榜<https://m.benew.com.cn/#/rank/up>
 
-    if (self.platform === 'Android') {
-      var url = window.__env.getOrigin() + '/#/rank/hot';
-      var title = '全网热议';
-      window.android.gotoWebActivity(url, title);
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.hotRank.postMessage({});
-    }
+  ```
+if (self.platform === 'Android') {
+  var url = window.__env.getOrigin() + '/#/rank/up';
+  var title = '看涨榜';
+  window.android.gotoWebActivity(url, title);
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.riseRank.postMessage({});
+}
+```
+
+1. 预测榜<https://m.benew.com.cn/#/rank/forecast>
+
+  ```
+if (self.platform === 'Android') {
+  var url = window.__env.getOrigin() + '/#/rank/forecast';
+  var title = '预测榜';
+  window.android.gotoWebActivity(url, title);
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.forecastRank.postMessage({});
+}
+```
+
+1. 热议飙升<https://m.benew.com.cn/#/rank/hotrise>
+
+  ```
+if (self.platform === 'Android') {
+  var url = window.__env.getOrigin() + '/#/rank/hotrise';
+  var title = '热议飙升';
+  window.android.gotoWebActivity(url, title);
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.gotoHotRise.postMessage({});
+}
+```
+
+1. 全网热议<https://m.benew.com.cn/#/rank/hot>
+
+  ```
+if (self.platform === 'Android') {
+  var url = window.__env.getOrigin() + '/#/rank/hot';
+  var title = '全网热议';
+  window.android.gotoWebActivity(url, title);
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.hotRank.postMessage({});
+}
+```
