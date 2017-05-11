@@ -1,5 +1,5 @@
-/* jshint ignore:start */
 'use strict';
+/* jshint ignore:start */
 ! function(e) {
   e.extend(e, {
     getQueryString: function(e) {
@@ -89,6 +89,10 @@
         } else if (/Android/.test(window.navigator.userAgent)) {
           platform = 'Android';
         }
+      }
+
+      if (platform === 'iOS' && window.BenewiOS && window.BenewiOS['appInfo'] && window.BenewiOS['appInfo'].length > 0) {
+        isInApp = true;
       }
 
       return {
@@ -282,3 +286,31 @@
   })
 }(Zepto);
 /* jshint ignore:end */
+
+(function() {
+  var NativeAPI = function() {
+  };
+  NativeAPI.prototype = {
+    // 刷新数据
+    refresh: function (hideLoadingToast) {
+      var params = {
+        'hideLoadingToast': hideLoadingToast ? true : false
+      };
+      console.log(params);
+    },
+
+    // 刷新数据 for iOS only - 参数类型：object
+    refreshWithParams: function (params) {
+      console.log(params);
+    },
+
+    scrollTop: function () {
+      console.log('scrollTop');
+    },
+
+    getPageStatus: function () {
+      console.log('getPageStatus');
+    },
+  };
+  window.BenewH5 = new NativeAPI();
+})();

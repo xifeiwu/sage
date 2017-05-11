@@ -256,7 +256,7 @@
       var getPath = function(url) {
         var proReg = /^https:\/\/m\.benew\.com\.cn\/(.*)$/;
         var uatReg = /^http:\/\/mtest\.iqianjin\.com\/(.*)$/;
-        platform = proReg.exec(url);
+        var platform = proReg.exec(url);
         if (platform) {
           return platform[1];
         }
@@ -264,7 +264,7 @@
         if (platform) {
           return platform[1];
         }
-      }
+      };
       var handleHrefInApp = function(url) {
         var path = getPath(url);
         console.log(path);
@@ -300,7 +300,7 @@
             }
             break;
         }
-      }
+      };
       var target = evt.target;
       var href = target.href;
 
