@@ -92,6 +92,12 @@
       }
 
       return {
+        isInApp: function() {
+          return inApp;
+        },
+        getPlatform: function() {
+          return platform;
+        },
         getTheme: function() {
           var theme = $.getQueryString('from');
           if (!theme) {

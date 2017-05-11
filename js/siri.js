@@ -157,6 +157,8 @@
       'USER_ASK': 3,
     };
     this.environments = $.getEnvironments();
+    this.inApp = this.environments.isInApp();
+    this.platform = this.environments.getPlatform();
     this.netConnector = new window.NetConnector({
       from: this.environments.getFrom()
     });
@@ -229,15 +231,12 @@
         window.location.hash = '';
       });
 
-      $.touchEvent($('a[href]'), function(evt) {
-        var target = evt.target;
-        console.log(target.href);
-      });
-      $('a[href]').on('click', function(evt) {
-        console.log(evt);
-        evt.preventDefault();
-        evt.stopPropagation();
-      });
+      // $.touchEvent($('a[href]'), function(evt) {
+      //   var target = evt.target;
+      //   console.log(target.href);
+      // });
+      $('a[href]').on('click', this.handleHrefClick.bind(this));
+
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
       // });
@@ -251,6 +250,68 @@
       // $('.ans_box .content .price .trade_price').on('transitionend webkitTransitionEnd oTransitionEnd', function(evt) {
       //   console.log('transitionend');
       // });
+    },
+
+    handleHrefClick: function(evt) {
+      var getPath = function(url) {
+        var proReg = /^https:\/\/m\.benew\.com\.cn\/(.*)$/;
+        var uatReg = /^http:\/\/mtest\.iqianjin\.com\/(.*)$/;
+        platform = proReg.exec(url);
+        if (platform) {
+          return platform[1];
+        }
+        platform = uatReg.exec(url);
+        if (platform) {
+          return platform[1];
+        }
+      }
+      var handleHrefInApp = function(url) {
+        var path = getPath(url);
+        console.log(path);
+        console.log(this.platform);
+        switch (path) {
+          case 'app/event-driven/event-driven.html':
+            if (this.platform === 'Android') {
+              window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
+            } else if (this.platform === 'iOS') {
+              window.webkit.messageHandlers.gotoEventDriven.postMessage({});
+            }
+            break;
+          case 'app/long/long.html':
+            if (this.platform === 'Android') {
+              window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
+            } else if (this.platform === 'iOS') {
+              window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
+            }
+            break;
+          case 'app/short/short.html':
+            if (this.platform === 'Android') {
+              window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
+            } else if (this.platform === 'iOS') {
+              window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
+            }
+            break;
+          default:
+            if (this.platform === 'Android') {
+              // window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
+              window.android.gotoWebActivity(url, '');
+            } else if (this.platform === 'iOS') {
+              window.webkit.messageHandlers.openUrl.postMessage({targetUrl: url});
+            }
+            break;
+        }
+      }
+      var target = evt.target;
+      var href = target.href;
+
+      if (this.inApp) {
+        handleHrefInApp.call(this, href);
+        evt.preventDefault();
+        evt.stopPropagation();
+      } else {
+        // handleHrefInApp.call(this, href);
+        // evt.preventDefault();
+      }
     },
 
     getChatHistory: function() {
@@ -363,6 +424,7 @@
           }.bind(this)).join('');
           cardNode.append($(answerDOM));
           if ('dt' in formated_contents) {
+            // update id when receive server feedback.
             cardNode.attr('id', formated_contents.dt);
             this.curCardID = formated_contents.dt;
           }
@@ -513,6 +575,7 @@
           });
           break;
       }
+      // randomID is only used for mark curCardID before receiving feedback from server.
       var randomID = parseInt(Math.random() * 1000000).toString();
       var card = $('<div id="' + randomID + '" class="card" data-style="' + cardStyle + '" style="overflow: hidden;">' + askDOM + answerDOM + '</div>');
       card.insertBefore($('#bottomDiv'));
