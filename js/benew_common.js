@@ -73,6 +73,83 @@
         }
       }
     },
+    getEnvironments: function() {
+      var inWechat = window.navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
+      var inApp = (typeof (window.android) !== 'undefined' && typeof (window.android.addEvent) !== 'undefined') ||
+        (typeof (window.webkit) !== 'undefined' &&
+        typeof (window.webkit.messageHandlers) !== 'undefined' &&
+        typeof (window.webkit.messageHandlers.addiOSTrackEvent) !== 'undefined');
+      inApp = inWechat ? false : inApp;
+      var platform = null;
+      if (inWechat) {
+        platform = 'wechat';
+      } else if (inApp) {
+        if (/iPhone/.test(window.navigator.userAgent)) {
+          platform = 'iOS';
+        } else if (/Android/.test(window.navigator.userAgent)) {
+          platform = 'Android';
+        }
+      }
+
+      return {
+        getTheme: function() {
+          var theme = $.getQueryString('from');
+          if (!theme) {
+            if (inApp) {
+              theme = 'app';
+            }
+          }
+          return theme;
+        },
+        getFrom: function() {
+          var from = null;
+          if (inApp) {
+            from = 'app';
+          } else if (inWechat) {
+            from = 'wechat';
+          }
+          return from;
+        },
+        getAppBuildType: function() {
+          var buildType = null;
+          switch(platform) {
+            case 'Android':
+              // 从安卓app获取参数
+              try {
+                var envObj = JSON.parse(window.android.getNativeParams());
+                if ('env' in envObj && typeof(envObj['env']) !== 'undefined') {
+                  buildType = envObj['env'];
+                }
+              } catch(e) {
+                buildType = null;
+              }
+              break;
+            case 'iOS':
+              // 从ios app获取参数
+              if (typeof(window.BenewiOS) === 'object' && typeof(window.BenewiOS['env']) === 'string') {
+                buildType = window.BenewiOS['env'];
+              }
+              break;
+          }
+          return buildType;
+        },
+        getOrigin: function(buildType) {
+          var origin = null;
+          switch (buildType) {
+            case 'uat':
+              origin = 'http://mtest.iqianjin.com';
+              break;
+            case 'product':
+              origin = 'https://m.benew.com.cn';
+              break;
+            default:
+              origin = 'http://mtest.iqianjin.com';
+              break;
+          }
+          return origin;
+        }
+      };
+    },
     getVersion: function() {
       var t = '',
         n = e.Deferred();

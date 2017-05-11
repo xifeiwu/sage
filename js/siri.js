@@ -156,11 +156,9 @@
       // 'SIRI_ASK_HINT': 2,
       'USER_ASK': 3,
     };
-    var env = this.getEnv();
-    this.theme = env[0];
-    this.from = env[1];
+    this.environments = $.getEnvironments();
     this.netConnector = new window.NetConnector({
-      from: this.from
+      from: this.environments.getFrom()
     });
     this.answerStyle = this.netConnector.answerStyle;
     this.sageSayCnt = 0;
@@ -169,9 +167,10 @@
   };
   BenewSage.prototype = {
     init: function() {
-      if (this.theme) {
-        $('#main').addClass(this.theme);
-        $('#siri_ask_hint').addClass(this.theme);
+      var theme = this.environments.getTheme();
+      if (theme) {
+        $('#main').addClass(theme);
+        $('#siri_ask_hint').addClass(theme);
       }
       this.siriAskHint = new SIRIAskHint(this);
       if (this.tagSaveChatHistory) {
@@ -183,30 +182,6 @@
       window.zhuge.track('sage_chat_open', {
         'token': window.localStorage.token
       });
-    },
-
-    getEnv: function() {
-      var inWechat = window.navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
-      var inApp = (typeof (window.android) !== 'undefined' && typeof (window.android.addEvent) !== 'undefined') ||
-        (typeof (window.webkit) !== 'undefined' &&
-        typeof (window.webkit.messageHandlers) !== 'undefined' &&
-        typeof (window.webkit.messageHandlers.addiOSTrackEvent) !== 'undefined');
-      inApp = inWechat ? false : inApp;
-      var platform = /iPhone/.test(window.navigator.userAgent) ? 'iOS' : (/Android/.test(window.navigator.userAgent) ? 'Android' : 'other');
-      
-      var theme = $.getQueryString('from');
-      if (!theme) {
-        if (inApp) {
-          theme = 'app';
-        }
-      }
-      var from = null;
-      if (inApp) {
-        from = 'app';
-      } else if (inWechat) {
-        from = 'wechat';
-      }
-      return [theme, from];
     },
 
     addEvent: function() {
@@ -255,14 +230,14 @@
       });
 
       $.touchEvent($('a[href]'), function(evt) {
-        target = evt.target;
+        var target = evt.target;
         console.log(target.href);
       });
       $('a[href]').on('click', function(evt) {
         console.log(evt);
         evt.preventDefault();
         evt.stopPropagation();
-      })
+      });
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
       // });
@@ -280,7 +255,7 @@
 
     getChatHistory: function() {
       if ('chatHistory' in window.localStorage) {
-        chatHistory = JSON.parse(window.localStorage.chatHistory);
+        var chatHistory = JSON.parse(window.localStorage.chatHistory);
         if (Array.isArray(chatHistory)) {
           this.chatHistory = chatHistory.filter(function(item) {
             return 'id' in item && 'text' in item && typeof(item.id) === 'number' && item.text.length > 0;
@@ -313,7 +288,7 @@
         .sort(function(it1, it2) {
           return it1.id - it2.id;
         });
-         window.localStorage.chatHistory = JSON.stringify(chatHistory);
+        window.localStorage.chatHistory = JSON.stringify(chatHistory);
       }
     },
 
