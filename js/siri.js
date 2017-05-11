@@ -240,6 +240,8 @@
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
       // });
+
+      // pagehide does not works well in ios.
       window.addEventListener('iOS' === this.platform ? 'pagehide' : 'beforeunload', function(evt) {
         if (this.tagSaveChatHistory) {
           this.saveChatHistory();
@@ -338,6 +340,7 @@
       }
     },
 
+    // event pagehide is not support so well in ios.
     saveChatHistory: function() {
       window.localStorage.here1 = this.chatHistory.length;
       if (Array.isArray(this.chatHistory)) {
@@ -436,6 +439,7 @@
               'id': formated_contents.dt,
               'text': cardNode.prop('outerHTML')
             });
+            this.saveChatHistory();
           }
           // console.log(this.chatHistory);
           // scroll answer
