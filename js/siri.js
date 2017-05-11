@@ -240,7 +240,7 @@
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
       // });
-      window.addEventListener(this.platform === 'iOS' ? 'pagehide' : 'beforeunload', function(evt) {
+      window.addEventListener('iOS' === this.platform ? 'pagehide' : 'beforeunload', function(evt) {
         if (this.tagSaveChatHistory) {
           this.saveChatHistory();
         }
@@ -338,6 +338,7 @@
     },
 
     saveChatHistory: function() {
+      window.localStorage.here1 = this.chatHistory.length;
       if (Array.isArray(this.chatHistory)) {
         var maxDuration = 2 * 24 * 3600 * 1000;
         var lastTime = this.chatHistory[this.chatHistory.length - 1].id;
@@ -350,6 +351,7 @@
           return it1.id - it2.id;
         });
         window.localStorage.chatHistory = JSON.stringify(chatHistory);
+        window.localStorage.here2 = this.chatHistory.length;
       }
     },
 
