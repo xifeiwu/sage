@@ -331,9 +331,10 @@
         this.chatHistory = [];
       }
       if (this.chatHistory.length > 0) {
-        this.chatHistory.forEach(function(it) {
-          $(it.text).insertBefore($('#bottomDiv'));
-        });
+        var historyText = this.chatHistory.map(function(it) {
+          return it.text;
+        }).join('');
+        $(historyText).insertBefore($('#bottomDiv'));
       }
     },
 
