@@ -52,20 +52,10 @@ This is the front-end part of project sage.
 1. 事件驱动<https://m.benew.com.cn/app/event-driven/event-driven.html>
 
   ```
-    if (self.platform === 'Android') {
-      window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
-    } else if (self.platform === 'iOS') {
-      window.webkit.messageHandlers.gotoEventDriven.postMessage({});
-    }
-```
-
-1. 短线机会<https://m.benew.com.cn/app/short/short.html>
-
-  ```
 if (self.platform === 'Android') {
-  window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
+  window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
 } else if (self.platform === 'iOS') {
-  window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
+  window.webkit.messageHandlers.gotoEventDriven.postMessage({});
 }
 ```
 
@@ -76,6 +66,16 @@ if (self.platform === 'Android') {
   window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
 } else if (self.platform === 'iOS') {
   window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
+}
+```
+
+1. 短线机会<https://m.benew.com.cn/app/short/short.html>
+
+  ```
+if (self.platform === 'Android') {
+  window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
+} else if (self.platform === 'iOS') {
+  window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
 }
 ```
 
