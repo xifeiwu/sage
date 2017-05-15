@@ -127,20 +127,20 @@
       return swiper;
     },
     initEvent: function() {
-      $.touchEvent(this.askHintDOM, '.swiper-slide-active .hint_list li', function(evt) {
+      this.askHintDOM.on('click', '.swiper-slide-active .hint_list li', function(evt) {
         var question = evt.target.textContent;
         $.output(question);
         this.container.askSIRI(question);
         this.show(false);
       }.bind(this));
       // 换一换
-      $.touchEvent(this.askHintDOM, '.btn_change_wrapper .btn_change', function() {
+      this.askHintDOM.on('click', '.btn_change_wrapper .btn_change', function() {
         if (this.mySwiper.slideNextManually) {
           this.mySwiper.slideNextManually();
         }
       }.bind(this));
       // 关闭
-      $.touchEvent(this.askHintDOM, '.btn_close_wrapper .btn_close', function() {
+      this.askHintDOM.on('click', '.btn_close_wrapper .btn_close', function() {
         this.show(false);
       }.bind(this));
     }
