@@ -20,15 +20,36 @@ This is the front-end part of project sage.
     benew-botweb-prod
 
 ## 后台交互规范
+1. 服务端主动提示（服务器在不能理解用户输入内容是，会给用户一个可提问问题的列表，在列表中会包含会牛的一些特色功能）
+
+  规范：
+
+  `使用answer_row中，通过show_ask_hint类来标示链接`
+
+  示例：
+
+  ```
+<div data-id="971187" class="card" data-style="user_ask" style="overflow: hidden;" id="1494839192510">
+  <div class="ask_row"><span>ee</span></div>
+  <div class="answer_row">
+    <div class="ans_logo"><i class="benew_logo"></i></div>
+    <div class="ans_cont">
+      <div class="ans_box">阿</div>
+    </div>
+  </div>
+  <div class="show_ask_hint"><span>你可以这样问我 &gt;</span></div>
+</div>
+```
+
 1. 文本内容(type=plain)中需要突出的部分
 
   规范：
 
-  给结点添加类key-point
+  给结点添加类key_point
 
   示例：
 
-  `<span class="key-point">这是文本中需要突出的部分</span>`
+  `<span class="key_point">这是文本中需要突出的部分</span>`
 
 
 1. 用户点击对话的部分链接，可以直接当做用户提问。
