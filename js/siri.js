@@ -664,7 +664,7 @@
       var self = this;
       var timeUsed = 300;
       var interval = 40;
-      var cardDOM = document.querySelector('[data-id="' + this.lastRandomID + '"');
+      var cardDOM = document.querySelector('[data-id="' + this.lastRandomID + '"]');
       if (null === cardDOM) {
         return;
       }
