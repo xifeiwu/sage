@@ -133,11 +133,13 @@
         this.container.askSIRI(question);
         this.show(false);
       }.bind(this));
+      // 换一换
       $.touchEvent(this.askHintDOM, '.btn_change_wrapper .btn_change', function() {
         if (this.mySwiper.slideNextManually) {
           this.mySwiper.slideNextManually();
         }
       }.bind(this));
+      // 关闭
       $.touchEvent(this.askHintDOM, '.btn_close_wrapper .btn_close', function() {
         this.show(false);
       }.bind(this));
@@ -202,10 +204,27 @@
           inputBar.blur();
         }
       }.bind(this));
-      $.touchEvent($('#dialog'), '.show_ask_hint', function() {
+
+      // $.touchEvent($('#dialog'), '.show_ask_hint', function() {
+      //   this.siriAskHint.show(true);
+      // }.bind(this));
+      // $.touchEvent($('#dialog'), '.active_link', function(evt) {
+      //   var target = evt.target;
+      //   var question = null;
+      //   if (target.dataset.question) {
+      //     question = target.dataset.question;
+      //   } else {
+      //     question = $(target).text();
+      //   }
+      //   $.output(question);
+      //   if (question) {
+      //     this.askSIRI(question);
+      //   }
+      // }.bind(this));
+      $('#dialog').on('click', '.card .show_ask_hint', function() {
         this.siriAskHint.show(true);
       }.bind(this));
-      $.touchEvent($('#dialog'), '.active_link', function(evt) {
+      $('#dialog').on('click', '.card .active_link', function(evt) {
         var target = evt.target;
         var question = null;
         if (target.dataset.question) {
@@ -218,6 +237,8 @@
           this.askSIRI(question);
         }
       }.bind(this));
+
+      // scroll to viewPort when softKeyBoard is poped up.
       $('#input_bar input[type="text"]').on('focus', function(evt) {
         var target = evt.target;
         setTimeout(function() {
@@ -235,7 +256,7 @@
       //   var target = evt.target;
       //   console.log(target.href);
       // });
-      $('a[href]').on('click', this.handleHrefClick.bind(this));
+      $('#dialog').on('click', '.card a[href]', this.handleHrefClick.bind(this));
 
       // window.addEventListener('load', function() {
       //   console.log(new Date().getTime());
