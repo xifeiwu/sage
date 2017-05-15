@@ -665,6 +665,9 @@
       var timeUsed = 300;
       var interval = 40;
       var cardDOM = document.querySelector('[data-id="' + this.lastRandomID + '"');
+      if (null === cardDOM) {
+        return;
+      }
       var cardTop = cardDOM.offsetTop;
       var cardBottom = cardTop + cardDOM.clientHeight;
       var wrapperTop = this.dialogWrapper.scrollTop;
