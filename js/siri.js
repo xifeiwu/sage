@@ -148,7 +148,7 @@
   var BenewSage = function() {
     this.benewId = $.getQueryString('benew_id');
     // used to follow last card id.
-    this.curCardID = null;
+    this.lastRandomID = null;
     this.dialogWrapper = document.getElementById('dialog_wrapper');
     this.wrapperHeight = $(this.dialogWrapper).height();
     this.cardStyle = {
@@ -336,6 +336,8 @@
           return it.text;
         }).join('');
         $(historyText).insertBefore($('#bottomDiv'));
+        this.lastRandomID = document.getElementById(this.chatHistory[this.chatHistory.length - 1].id).dataset.id;
+        this.scrollAnimate(false);
       }
     },
 
@@ -418,7 +420,9 @@
           content: question,
         });
         // scroll ask first
-        this.scrollAnimate();
+        if (cardType === this.cardStyle.USER_ASK) {
+          this.scrollAnimate();
+        }
         this.netConnector.askServer(askParams, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
@@ -435,7 +439,7 @@
           if ('dt' in formated_contents) {
             // update id when receive server feedback.
             cardNode.attr('id', formated_contents.dt);
-            this.curCardID = formated_contents.dt;
+            // this.lastRandomID = formated_contents.dt;
           }
 
           if (this.tagSaveChatHistory && !err) {
@@ -588,9 +592,9 @@
       }
       // randomID is only used for mark curCardID before receiving feedback from server.
       var randomID = parseInt(Math.random() * 1000000).toString();
-      var card = $('<div id="' + randomID + '" class="card" data-style="' + cardStyle + '" style="overflow: hidden;">' + askDOM + answerDOM + '</div>');
+      var card = $('<div data-id="' + randomID + '" class="card" data-style="' + cardStyle + '" style="overflow: hidden;">' + askDOM + answerDOM + '</div>');
       card.insertBefore($('#bottomDiv'));
-      this.curCardID = randomID;
+      this.lastRandomID = randomID;
       return card;
     },
 
@@ -598,17 +602,21 @@
       cardNode.find('.answer_row .ans_cont .ans_box .dots_loading').closest('.answer_row').remove();
     },
 
-    scrollAnimate: function() {
+    scrollAnimate: function(scroll) {
+      if (undefined === scroll) {
+        scroll = true;
+      }
       var scrollTop = false;
       if (scrollTop) {
         this.scrollTopAnimate();
       } else {
-        this.scrollBottomAnimate();
+        this.scrollBottomAnimate(scroll);
       }
     },
 
     bottomDiv: function() {
-      var curCard = $('#' + this.curCardID);
+      // var curCard = $('#' + this.lastRandomID);
+      var curCard = $('[data-id="' + this.lastRandomID + '"');
       var cardHeight = curCard.height();
       var bootomHeight = this.wrapperHeight - cardHeight;
       if ((this.wrapperHeight - cardHeight) > 0) {
@@ -624,7 +632,9 @@
       var self = this;
       var goOn = true,
         timeUsed = 300,
-        cardTop = document.getElementById(this.curCardID).offsetTop,
+        // cardTop = document.getElementById(this.lastRandomID).offsetTop,
+         cardDOM = document.querySelector('[data-id="' + this.lastRandomID + '"');
+         cardTop = cardDOM.offsetTop;
         wrapperTop = this.dialogWrapper.scrollTop,
         interval = 40,
         step = (cardTop - wrapperTop) / timeUsed * interval;
@@ -650,11 +660,11 @@
         goOn = false;
       }, timeUsed + 200);
     },
-    scrollBottomAnimate: function() {
+    scrollBottomAnimate: function(scroll) {
       var self = this;
       var timeUsed = 300;
-      var  interval = 40;
-      var cardDOM = document.getElementById(this.curCardID);
+      var interval = 40;
+      var cardDOM = document.querySelector('[data-id="' + this.lastRandomID + '"');
       var cardTop = cardDOM.offsetTop;
       var cardBottom = cardTop + cardDOM.clientHeight;
       var wrapperTop = this.dialogWrapper.scrollTop;
@@ -683,7 +693,11 @@
           goOn = false;
         }
       };
-      scrollFunc();
+      if (scroll) {
+        scrollFunc();
+      } else {
+        self.dialogWrapper.scrollTop = wrapperTop + cardBottom - wrapperBottom;
+      }
     },
     openUrl: function(e) {
       location.href = e.url;
