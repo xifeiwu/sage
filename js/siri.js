@@ -299,8 +299,13 @@
       };
 
       var handleHrefInApp = function(href) {
-        var buildType = this.environments.getAppBuildType();
-        var appVersion = this.environments.getAppVersion();
+        var appInfo = this.environments.getAppInfo();
+        var appVersion = null;
+        if ('appVersion' in appInfo) {
+          appVersion = appInfo.appVersion;
+        } else {
+          appVersion = '1.5.0';
+        }
         var urlParts = splitHref(href);
 
         var origin = null;
@@ -309,7 +314,6 @@
           origin = urlParts[1];
           path = urlParts[2];
         }
-        console.log(path);
         console.log(this.platform);
         if (origin && path) {
           switch (path) {

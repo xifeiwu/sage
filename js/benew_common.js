@@ -195,51 +195,43 @@
           return from;
         },
         // uat or product
-        getAppBuildType: function() {
-          var buildType = null;
+        getAppInfo: function() {
+          var appInfo = {}
+          if ('appInfo' in localStorage) {
+            appInfo = JSON.parse(localStorage.appInfo);
+          }
           switch (platform) {
             case 'Android':
               // 从安卓app获取参数
               try {
                 var envObj = JSON.parse(window.android.getNativeParams());
                 if ('env' in envObj && typeof(envObj['env']) !== 'undefined') {
-                  buildType = envObj['env'];
+                  appInfo.buildType = envObj['env'];
+                  localStorage.appInfo = JSON.stringify(appInfo);
                 }
-              } catch (e) {
-                buildType = null;
-              }
-              break;
-            case 'iOS':
-              // 从ios app获取参数
-              if (typeof(window.BenewiOS) === 'object' && typeof(window.BenewiOS['env']) === 'string') {
-                buildType = window.BenewiOS['env'];
-              }
-              break;
-          }
-          return buildType;
-        },
-        getAppVersion: function() {
-          var appVersion = null;
-          switch (platform) {
-            case 'Android':
-              // 从安卓app获取参数
-              try {
-                var envObj = JSON.parse(window.android.getNativeParams());
                 if ('version' in envObj && typeof(envObj['version']) !== 'undefined') {
-                  appVersion = envObj['version'];
+                  appInfo.appVersion = envObj['version'];
+                  localStorage.appInfo = JSON.stringify(appInfo);
                 }
               } catch (e) {
-                appVersion = null;
               }
               break;
             case 'iOS':
               // 从ios app获取参数
-              if (typeof(window.BenewiOS) === 'object' && typeof(window.BenewiOS['version']) === 'string') {
-                appVersion = window.BenewiOS['version'];
+              if (typeof(window.BenewiOS) === 'object') {
+                if (typeof(window.BenewiOS['env']) === 'string') {
+                  appInfo.buildType = window.BenewiOS['env'];
+                  localStorage.appInfo = JSON.stringify(appInfo);
+                }
+                if (typeof(window.BenewiOS['version']) === 'string') {
+                  appInfo.appVersion = window.BenewiOS['version'];
+                  localStorage.appInfo = JSON.stringify(appInfo);
+                }
+                localStorage.appInfo = JSON.stringify(appInfo);
               }
               break;
           }
-          return appVersion;
+          return appInfo;
         },
         getOrigin: function(buildType) {
           var origin = null;
