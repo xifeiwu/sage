@@ -194,6 +194,7 @@
           }
           return from;
         },
+        // uat or product
         getAppBuildType: function() {
           var buildType = null;
           switch (platform) {
@@ -216,6 +217,29 @@
               break;
           }
           return buildType;
+        },
+        getAppVersion: function() {
+          var appVersion = null;
+          switch (platform) {
+            case 'Android':
+              // 从安卓app获取参数
+              try {
+                var envObj = JSON.parse(window.android.getNativeParams());
+                if ('version' in envObj && typeof(envObj['version']) !== 'undefined') {
+                  appVersion = envObj['version'];
+                }
+              } catch (e) {
+                appVersion = null;
+              }
+              break;
+            case 'iOS':
+              // 从ios app获取参数
+              if (typeof(window.BenewiOS) === 'object' && typeof(window.BenewiOS['version']) === 'string') {
+                appVersion = window.BenewiOS['version'];
+              }
+              break;
+          }
+          return appVersion;
         },
         getOrigin: function(buildType) {
           var origin = null;

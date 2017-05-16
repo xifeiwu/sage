@@ -276,56 +276,69 @@
     },
 
     handleHrefClick: function(evt) {
-      var getPath = function(url) {
-        var proReg = /^https:\/\/m\.benew\.com\.cn\/(.*)$/;
-        var uatReg = /^http:\/\/mtest\.iqianjin\.com\/(.*)$/;
-        var platform = proReg.exec(url);
-        if (platform) {
-          return platform[1];
+      var splitHref = function(url) {
+        var proReg = /(^https:\/\/m\.benew\.com\.cn\/)(.*)$/;
+        var uatReg = /(^http:\/\/mtest\.iqianjin\.com\/)(.*)$/;
+        var urlParts = proReg.exec(url);
+        if (urlParts) {
+          return urlParts;
         }
-        platform = uatReg.exec(url);
-        if (platform) {
-          return platform[1];
+        urlParts = uatReg.exec(url);
+        if (urlParts) {
+          return urlParts;
+        }
+        return url;
+      };
+
+      var openInWebView = function(href) {
+        if (this.platform === 'Android') {
+          window.android.gotoWebActivity(href, '');
+        } else if (this.platform === 'iOS') {
+          window.webkit.messageHandlers.openUrl.postMessage({targetUrl: href});
         }
       };
-      var handleHrefInApp = function(url) {
-        var path = getPath(url);
+
+      var handleHrefInApp = function(href) {
+        var buildType = this.environments.getAppBuildType();
+        var appVersion = this.environments.getAppVersion();
+        var urlParts = splitHref(href);
+
+        var origin = null;
+        var path = null;
+        if (3 === urlParts.length) {
+          origin = urlParts[1];
+          path = urlParts[2];
+        }
         console.log(path);
         console.log(this.platform);
-        switch (path) {
-          // case 'app/event-driven/event-driven.html':
-          //   if (this.platform === 'Android') {
-          //     window.android.gotoNativeWebActivity('事件驱动', 'event-driven/event-driven.html');
-          //   } else if (this.platform === 'iOS') {
-          //     window.webkit.messageHandlers.gotoEventDriven.postMessage({});
-          //   }
-          //   break;
-          // case 'app/long/long.html':
-          //   if (this.platform === 'Android') {
-          //     window.android.gotoNativeWebActivity('中长线机会', 'long/long.html');
-          //   } else if (this.platform === 'iOS') {
-          //     window.webkit.messageHandlers.gotoLongOpportunity.postMessage({});
-          //   }
-          //   break;
-          // case 'app/short/short.html':
-          //   if (this.platform === 'Android') {
-          //     window.android.gotoNativeWebActivity('短线机会', 'short/short.html');
-          //   } else if (this.platform === 'iOS') {
-          //     window.webkit.messageHandlers.gotoShortOpportunity.postMessage({});
-          //   }
-          //   break;
-          default:
-            if (this.platform === 'Android') {
-              window.android.gotoWebActivity(url, '');
-            } else if (this.platform === 'iOS') {
-              window.webkit.messageHandlers.openUrl.postMessage({targetUrl: url});
-            }
-            break;
+        if (origin && path) {
+          switch (path) {
+            case 'app/stockpool-v2/stockpool.html':
+              switch (appVersion) {
+                case '1.5.0':
+                  path = 'app/golden/golden.html';
+                  break;
+              }
+              openInWebView.call(this, origin + path);
+              break;
+            case 'app/short/short.html':
+              switch (appVersion) {
+                case '1.5.0':
+                  path = 'app/short-v2/short-v2.html';
+                  break;
+              }
+              openInWebView.call(this, origin + path);
+            default:
+              openInWebView.call(this, href);
+              break;
+          }
+        } else {
+          openInWebView.call(this, href);
         }
       };
+
       var target = evt.target;
       var href = target.href;
-
       if (this.inApp) {
         handleHrefInApp.call(this, href);
         evt.preventDefault();
