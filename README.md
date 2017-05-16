@@ -90,7 +90,11 @@ if (self.platform === 'Android') {
 }
 ```
 
-1. 短线机会<https://m.benew.com.cn/app/short/short.html>
+1. 短线机会
+
+  **url**  
+  [1.4.0] <https://m.benew.com.cn/app/short/short.html>  
+  [1.5.0] <http://mtest.iqianjin.com/app/short-v2/short-v2.html>
 
   ```
 if (self.platform === 'Android') {
@@ -100,7 +104,11 @@ if (self.platform === 'Android') {
 }
 ```
 
-1. 股票池<https://m.benew.com.cn/app/stockpool-v2/stockpool.html>
+1. 会牛金股
+
+  **url**  
+  [1.4.0] <https://m.benew.com.cn/app/stockpool-v2/stockpool.html>  
+  [1.5.0] <http://m.benew.com.cn/app/golden/golden.html>
 
   ```
   if (self.platform === 'Android') {
