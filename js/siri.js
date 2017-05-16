@@ -332,6 +332,7 @@
                   break;
               }
               openInWebView.call(this, origin + path);
+              break;
             default:
               openInWebView.call(this, href);
               break;
