@@ -53,10 +53,10 @@
 '</div>';
         return answerDom;
       }
-      this.container.netConnector.askServer({
-        'askType': 'ASK',
+      this.container.askServer({
+        'askType': this.container.askType.ASK,
         'question': 'recommend'
-      }, function(err, content) {
+      }, {}, function(err, content) {
         // $.output(content);
         var resData = null;
         if (err) {
@@ -911,10 +911,9 @@
           }
           var secode = quotationNode.dataset.code;
           this.askServer({
-            'askType': this.askType['REFRESH'],
+            'askType': this.askType.REFRESH,
             'question': secode
           }, {
-
           }, function(err, formated_contents) {
             if (err) {
               return;

@@ -68,7 +68,6 @@ NetConnector.prototype = {
    * @askActions: related to queryString
    */
   _getURL: function(askType, question, askActions) {
-    // var askType = options.askType;
     var host = this.getAjaxHost(this.profile);
     var path = null;
     switch (askType) {
