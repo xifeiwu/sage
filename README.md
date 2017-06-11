@@ -2,10 +2,25 @@
 
 This is the front-end part of project sage.
 
-## 数据
+## how to run
+
+    gulp watch
+    node server/index.js
+
+
+## 发布
+发布地址(uat及product)：<http://10.10.221.28/>
+
+    benew-botweb-uat
+    benew-botweb-prod
+
+# 后台部分
+
+## 后台数据（type部分）
 
 |type|含义|
 | ---- |:--:|
+|help | 帮助，您可以这样问|
 |recommend | 推荐页面|
 |plain | 文本内容|
 |quotation | 行情|
@@ -13,11 +28,6 @@ This is the front-end part of project sage.
 |forcast | 预测|
 |optimization | 选股|
 
-## 发布
-发布地址(uat及product)：<http://10.10.221.28/>
-
-    benew-botweb-uat
-    benew-botweb-prod
 
 ## 后台交互规范
 1. 服务端主动提示（服务器在不能理解用户输入内容是，会给用户一个可提问问题的列表，在列表中会包含会牛的一些特色功能）
@@ -68,7 +78,29 @@ This is the front-end part of project sage.
   </p>
   ```
 
-## APP交互
+
+
+## APP交互(APP到哲)
+客户端传递给哲的参数主要来自queryString，目前的相关参数有：
+
+1. theme(主题颜色)
+
+  可选：app
+
+1. from(会话平台)
+
+  可选：app, wechat
+
+1. action(用户动作)
+  
+  可选：feedback
+
+目前用到的接口
+
+?from=app&action=feedback
+
+
+## APP交互(哲到APP)
 
 1. 事件驱动<https://m.benew.com.cn/app/event-driven/event-driven.html>
 

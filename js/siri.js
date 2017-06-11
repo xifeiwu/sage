@@ -130,7 +130,7 @@
       this.askHintDOM.on('click', '.swiper-slide-active .hint_list li', function(evt) {
         var question = evt.target.textContent;
         $.output(question);
-        this.container.askSIRI(question);
+        this.container.createConversation(question);
         this.show(false);
       }.bind(this));
       // 换一换
@@ -148,7 +148,7 @@
 
 
   var BenewSage = function() {
-    this.benewId = $.getQueryString('benew_id');
+    this.benewID = $.getQueryString('benew_id');
     // used to follow last card id.
     this.lastRandomID = null;
     this.dialogWrapper = document.getElementById('dialog_wrapper');
@@ -164,6 +164,7 @@
     this.netConnector = new window.NetConnector({
       from: this.environments.getFrom()
     });
+    this.askType = this.netConnector.askType;
     this.answerStyle = this.netConnector.answerStyle;
     this.sageSayCnt = 0;
     this.tagSaveChatHistory = true;
@@ -181,7 +182,12 @@
         this.getChatHistory();
       }
       this.addEvent();
-      this.siriSay('hi');
+      this.siriSay('hi', {
+          'SEND_BENEW_ID': {
+            'benewID': this.benewID
+          }
+        }
+      );
       this.startHeartBeat();
       window.zhuge.track('sage_chat_open', {
         'token': window.localStorage.token
@@ -191,7 +197,7 @@
     addEvent: function() {
       $('#input_bar .btn_go').on('click', function() {
         var inputBar = $('#input_bar input');
-        this.askSIRI(inputBar.val());
+        this.createConversation(inputBar.val());
         inputBar.val('');
         inputBar.blur();
       }.bind(this));
@@ -199,7 +205,7 @@
         var s = t || window.event;
         if (s && 13 === s.keyCode) {
           var inputBar = $('#input_bar input');
-          this.askSIRI(inputBar.val());
+          this.createConversation(inputBar.val());
           inputBar.val('');
           inputBar.blur();
         }
@@ -218,7 +224,7 @@
       //   }
       //   $.output(question);
       //   if (question) {
-      //     this.askSIRI(question);
+      //     this.createConversation(question);
       //   }
       // }.bind(this));
       $('#dialog').on('click', '.card .show_ask_hint', function() {
@@ -234,7 +240,7 @@
         }
         $.output(question);
         if (question) {
-          this.askSIRI(question);
+          this.createConversation(question);
         }
       }.bind(this));
 
@@ -381,10 +387,10 @@
     },
 
     /**
-     * only the card user ask with server answer be saved to localStorage, this rule is implemnted in function: askSIRI, saveChatHistory.
+     * only the card user ask with server answer be saved to localStorage, this rule is implemnted in function: createConversation, saveChatHistory.
      * saveChatHistory is called in two place:
      * 1. pagehide callback
-     * 2. askSIRI, as event pagehide is not support so well in ios
+     * 2. createConversation, as event pagehide is not support so well in ios
      */
     saveChatHistory: function() {
       if (Array.isArray(this.chatHistory)) {
@@ -403,8 +409,15 @@
       }
     },
 
-    siriSay: function(content) {
-      this.askSIRI(content, this.cardStyle.SIRI_SAY);
+    /**
+     * siriSay: 
+     * 1. the same as user createConversation except not showing ask dom
+     */
+    siriSay: function(question, actions) {
+      this.createConversation({
+        'type': this.cardStyle.SIRI_SAY,
+        'question': question
+      }, actions);
       // if (!content || content.length === 0) {
       //   return;
       // }
@@ -412,7 +425,7 @@
       // if (content.length > 0) {
       //   this.netConnector.askServer({
       //     'askType': 'FIRST_ASK',
-      //     'benewId': this.benewId,
+      //     'benewId': this.benewID,
       //     'question': content
       //   }, function(err, formated_contents) {
       //     if (err) {
@@ -430,39 +443,69 @@
       // }
     },
 
-    // logic: createCard -> createAskDOM -> createAnswerDOM
-    askSIRI: function(question, cardType) {
-      if (!question || question.length === 0) {
-        return;
+    /**
+     * logic: createCard -> createAskDOM -> createAnswerDOM
+     * @askOptions can be string or object
+     * string: question to ask
+     * object: {
+     *   'type': this.cardStyle.SIRI_SAY,
+     *   'question': {
+     *      'toShow': '',
+     *      'toAsk': ''
+     *   }
+     * }
+     */
+    createConversation: function(askOptions, askActions) {
+      var cardType = this.cardStyle.USER_ASK;
+      var questionToShow = '';
+      var questionToServer = '';
+
+      if (typeof(askOptions) === 'string') {
+        questionToShow = questionToServer = askOptions.trim();
+      } else if (typeof(askOptions) === 'object') {
+        cardType = 'type' in askOptions ? askOptions['type'] : cardType;
+        if ('question' in askOptions) {
+          if (typeof(askOptions['question']) === 'string') {
+            questionToShow = questionToServer = askOptions['question'].trim();
+          } else if (typeof(askOptions['question']) === 'object') {
+            questionToShow = askOptions['question']['toShow'].trim();
+            questionToServer = askOptions['question']['toServer'].trim();
+          }
+        }
       }
-      cardType = cardType ? cardType : this.cardStyle.USER_ASK;
-      question = question.trim();
-      var askParams = null;
-      switch (cardType) {
-        case this.cardStyle.SIRI_SAY:
-          askParams = {
-            'askType': 'FIRST_ASK',
-            'benewId': this.benewId,
-            'question': question
-          };
-          break;
-        case this.cardStyle.USER_ASK:
-          askParams = {
-            'askType': 'ASK',
-            'question': question
-          };
-          break;
+      if (!askActions) {
+        askActions = {};
       }
-      if (question.length > 0) {
+
+      // var askParams = null;
+      // switch (cardType) {
+      //   case this.cardStyle.SIRI_SAY:
+      //     askParams = {
+      //       'askType': 'FIRST_ASK',
+      //       'benewId': this.benewID,
+      //       'question': question
+      //     };
+      //     break;
+      //   case this.cardStyle.USER_ASK:
+      //     askParams = {
+      //       'askType': 'ASK',
+      //       'question': question
+      //     };
+      //     break;
+      // }
+      if (questionToShow.length > 0 && questionToServer.length > 0 ) {
         var cardNode = this.createCard({
           type: cardType,
-          content: question,
+          content: questionToShow,
         });
         // scroll ask first
         if (cardType === this.cardStyle.USER_ASK) {
           this.scrollAnimate();
         }
-        this.netConnector.askServer(askParams, function(err, formated_contents) {
+        this.askServer({
+          'askType': this.askType.ASK,
+          'question': questionToServer
+        }, askActions, function(err, formated_contents) {
           if (err) {
             formated_contents = [{
               style: this.answerStyle.PLAIN_TEXT,
@@ -493,6 +536,15 @@
           this.scrollAnimate();
         }.bind(this));
       }
+    },
+    askServer: function(askOptions, askActions, cb) {
+      // type = , question
+      if (!('type' in askOptions) || !('question' in askOptions)) {
+        return;
+      }
+      var type = askOptions['type'];
+      var question = askOptions['question'];
+      this.netConnector.askServer(type, question, askActions, cb);
     },
 
     createAnswerDOM: function(options) {
@@ -858,9 +910,11 @@
             return;
           }
           var secode = quotationNode.dataset.code;
-          this.netConnector.askServer({
-            'askType': 'REFRESH',
+          this.askServer({
+            'askType': this.askType['REFRESH'],
             'question': secode
+          }, {
+
           }, function(err, formated_contents) {
             if (err) {
               return;

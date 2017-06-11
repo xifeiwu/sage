@@ -1,8 +1,12 @@
 'use strict';
 var NetConnector = function(headers) {
-  this.profile = 'product';
+  this.profile = 'uat';
   this.ajaxHeaders = headers;
   this.ajaxHeaders.token = window.localStorage.token;
+  this.askType = {
+    'ASK': 1,
+    'REFRESH':2
+  };
   this.answerStyle = {
     'WAITING': 1,
     'ASK_HINT': 2,
@@ -18,6 +22,7 @@ NetConnector.prototype = {
   setToken: function(token) {
     if (token && window.localStorage.token !== token) {
       window.localStorage.token = token;
+      // the key-value in queryString will also be included in ajax header
       this.ajaxHeaders.token = token;
     }
   },
@@ -57,30 +62,38 @@ NetConnector.prototype = {
     return queryString.join('&');
   },
 
-  _getURL: function(options) {
-    var askType = options.askType;
+  /**
+   * @askType: enum, related to url
+   * @question
+   * @askActions: related to queryString
+   */
+  _getURL: function(askType, question, askActions) {
+    // var askType = options.askType;
     var host = this.getAjaxHost(this.profile);
-    var token = window.localStorage.token;
     var path = null;
     switch (askType) {
-      case 'FIRST_ASK':
-        path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
-          'benew_id': options.benewId,
-          'msg': options.question
-        });
-        break;
-      case 'ASK':
-        path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
-          'msg': options.question
-        });
+      // case 'FIRST_ASK':
+      //   path = 'bot/api/v1/botServer/sessionOperator/receiveh5?' + this.getQueryString({
+      //     'benew_id': options.benewId,
+      //     'msg': options.question
+      //   });
+      //   break;
+      case this.askType.ASK:
+        path = 'bot/api/v1/botServer/sessionOperator/receiveh5';
         break;
       case 'REFRESH':
-        path = 'bot/api/v1/botServer/sessionOperator/flashh5?' + this.getQueryString({
-          'msg': options.question
-        });
+        path = 'bot/api/v1/botServer/sessionOperator/flashh5';
         break;
     }
-    return host + path;
+    var queryObj = {
+      'msg': question,
+    };
+    for (var key in askActions) {
+      if ('SEND_BENEW_ID' === key) {
+        queryObj['benew_id'] = askActions['SEND_BENEW_ID']['benewId'];
+      }
+    }
+    return host + path + '?' + this.getQueryString(queryObj);
   },
 
   // 函数节流, 避免同一个接口短时间内被重复调用
@@ -102,28 +115,28 @@ NetConnector.prototype = {
     }, 300);
   },
 
-  askServer: function(options, cb) {
-    var askType = options.askType;
-    switch (askType) {
-      case 'FIRST_ASK':
-        this._getSIRIAnswer(options, cb);
-        break;
-      case 'ASK':
-        this._getSIRIAnswer(options, cb);
-        break;
-      case 'REFRESH':
-        this._getSIRIAnswer(options, cb);
-        break;
-      default:
-        this._getSIRIAnswer(options, cb);
-        // this.throttle(function() {
-        //   this._getSIRIAnswer(question, cb);
-        // }.bind(this));
-        break;
-    }
+  askServer: function(askType, question, askActions, cb) {
+    // var askType = '';
+    // switch (askType) {
+    //   case 'ASK':
+    //     this._getSIRIAnswer(options, cb);
+    //     break;
+    //   case 'REFRESH':
+    //     this._getSIRIAnswer(options, cb);
+    //     break;
+    //   default:
+    //     this._getSIRIAnswer(options, cb);
+    //     // this.throttle(function() {
+    //     //   this._getSIRIAnswer(question, cb);
+    //     // }.bind(this));
+    //     break;
+    // }
+    var url = this._getURL(askType, question, askActions);
+    this._getSIRIAnswer(url, cb);
+
   },
 
-  _getSIRIAnswer: function(options, cb) {
+  _getSIRIAnswer: function(url, cb) {
     var self = this;
     // the data from server
     // var response = this.recommendAnswer;
@@ -145,8 +158,9 @@ NetConnector.prototype = {
           switch(content.type) {
             case 'recommend':
               formated_contents = content;
+              $.output(formated_contents);
               break;
-              case 'help':
+            case 'help':
               formated_contents.push({
                 style: self.answerStyle.ASK_HINT,
                 content: content.data.body
@@ -188,7 +202,6 @@ NetConnector.prototype = {
       cb(null, formated_contents);
     };
 
-    var url = this._getURL(options);
     $.output(url);
     $.ajax({
       url : url,

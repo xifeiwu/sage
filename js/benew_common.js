@@ -177,7 +177,7 @@
           return platform;
         },
         getTheme: function() {
-          var theme = $.getQueryString('from');
+          var theme = $.getQueryString('theme');
           if (!theme) {
             if (inApp) {
               theme = 'app';
@@ -185,6 +185,10 @@
           }
           return theme;
         },
+        /**
+         * where the conversition come from:
+         * app, wechat, forecast
+         */
         getFrom: function() {
           var from = null;
           if (inApp) {
@@ -193,6 +197,9 @@
             from = 'wechat';
           }
           return from;
+        },
+        getAction: function () {
+          return $.getQueryString('action');
         },
         // uat or product
         getAppInfo: function() {
