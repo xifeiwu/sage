@@ -72,6 +72,6 @@ gulp.task('deploy', function () {
 });
 
 /*********** HTML + CSS + JavaScript ***********/
-gulp.task('build', ['html', 'sass', 'js'], function(){
+gulp.task('build', ['html', 'sass', 'sage'], function(){
   console.log('complete');
 });
