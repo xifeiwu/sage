@@ -81,7 +81,7 @@ NetConnector.prototype = {
       case this.askType.ASK:
         path = 'bot/api/v1/botServer/sessionOperator/receiveh5';
         break;
-      case 'REFRESH':
+      case this.askType.REFRESH:
         path = 'bot/api/v1/botServer/sessionOperator/flashh5';
         break;
     }

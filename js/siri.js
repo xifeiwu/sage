@@ -539,12 +539,12 @@
     },
     askServer: function(askOptions, askActions, cb) {
       // type = , question
-      if (!('type' in askOptions) || !('question' in askOptions)) {
+      if (!('askType' in askOptions) || !('question' in askOptions)) {
         return;
       }
-      var type = askOptions['type'];
+      var askType = askOptions['askType'];
       var question = askOptions['question'];
-      this.netConnector.askServer(type, question, askActions, cb);
+      this.netConnector.askServer(askType, question, askActions, cb);
     },
 
     createAnswerDOM: function(options) {
