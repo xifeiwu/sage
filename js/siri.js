@@ -130,7 +130,7 @@
       this.askHintDOM.on('click', '.swiper-slide-active .hint_list li', function(evt) {
         var question = evt.target.textContent;
         $.output(question);
-        this.container.createConversation(question);
+        this.container.userAsk(question);
         this.show(false);
       }.bind(this));
       // 换一换
@@ -159,10 +159,16 @@
       'USER_ASK': 3,
     };
     this.environments = $.getEnvironments();
-    this.inApp = this.environments.isInApp();
-    this.platform = this.environments.getPlatform();
+    this.env = {
+      'inAPP': this.environments.isInApp(),
+      'platform': this.environments.getPlatform(),
+      'from': this.environments.getFrom(),
+      'action': this.environments.getAction(),
+      'theme': this.environments.getTheme(),
+      'appInfo': this.environments.getAppInfo()
+    };
     this.netConnector = new window.NetConnector({
-      from: this.environments.getFrom()
+      from: this.env.from
     });
     this.askType = this.netConnector.askType;
     this.answerStyle = this.netConnector.answerStyle;
@@ -172,7 +178,7 @@
   };
   BenewSage.prototype = {
     init: function() {
-      var theme = this.environments.getTheme();
+      var theme = this.env.theme;
       if (theme) {
         $('#main').addClass(theme);
         $('#siri_ask_hint').addClass(theme);
@@ -182,12 +188,27 @@
         this.getChatHistory();
       }
       this.addEvent();
-      this.siriSay('hi', {
-          'SEND_BENEW_ID': {
-            'benewID': this.benewID
-          }
-        }
-      );
+      switch(this.env.action) {
+        case 'feedback':
+          this.userAsk({
+            'toShow': '我要反馈',
+            'toAsk': '我要反馈 ' + this.env.from
+          }, {
+              'SEND_BENEW_ID': {
+                'benewID': this.benewID
+              }
+            }
+          );
+          break;
+        default:
+          this.siriSay('hi', {
+              'SEND_BENEW_ID': {
+                'benewID': this.benewID
+              }
+            }
+          );
+          break;
+      }
       this.startHeartBeat();
       window.zhuge.track('sage_chat_open', {
         'token': window.localStorage.token
@@ -197,7 +218,7 @@
     addEvent: function() {
       $('#input_bar .btn_go').on('click', function() {
         var inputBar = $('#input_bar input');
-        this.createConversation(inputBar.val());
+        this.userAsk(inputBar.val());
         inputBar.val('');
         inputBar.blur();
       }.bind(this));
@@ -205,7 +226,7 @@
         var s = t || window.event;
         if (s && 13 === s.keyCode) {
           var inputBar = $('#input_bar input');
-          this.createConversation(inputBar.val());
+          this.userAsk(inputBar.val());
           inputBar.val('');
           inputBar.blur();
         }
@@ -224,7 +245,7 @@
       //   }
       //   $.output(question);
       //   if (question) {
-      //     this.createConversation(question);
+      //     this.userAsk(question);
       //   }
       // }.bind(this));
       $('#dialog').on('click', '.card .show_ask_hint', function() {
@@ -240,7 +261,7 @@
         }
         $.output(question);
         if (question) {
-          this.createConversation(question);
+          this.userAsk(question);
         }
       }.bind(this));
 
@@ -269,7 +290,7 @@
       // });
 
       // pagehide does not works well in ios.
-      window.addEventListener('iOS' === this.platform ? 'pagehide' : 'beforeunload', function(evt) {
+      window.addEventListener('iOS' === this.env.platform ? 'pagehide' : 'beforeunload', function(evt) {
         if (this.tagSaveChatHistory) {
           this.saveChatHistory();
         }
@@ -297,15 +318,15 @@
       };
 
       var openInWebView = function(href) {
-        if (this.platform === 'Android') {
+        if (this.env.platform === 'Android') {
           window.android.gotoWebActivity(href, '');
-        } else if (this.platform === 'iOS') {
+        } else if (this.env.platform === 'iOS') {
           window.webkit.messageHandlers.openUrl.postMessage({targetUrl: href});
         }
       };
 
       var handleHrefInApp = function(href) {
-        var appInfo = this.environments.getAppInfo();
+        var appInfo = this.env.appInfo;
         var appVersion = null;
         if ('appVersion' in appInfo) {
           appVersion = appInfo.appVersion;
@@ -320,7 +341,7 @@
           origin = urlParts[1];
           path = urlParts[2];
         }
-        console.log(this.platform);
+        console.log(this.env.platform);
         if (origin && path) {
           switch (path) {
             case 'app/stockpool-v2/stockpool.html':
@@ -350,7 +371,7 @@
 
       var target = evt.target;
       var href = target.href;
-      if (this.inApp) {
+      if (this.env.inApp) {
         handleHrefInApp.call(this, href);
         evt.preventDefault();
         evt.stopPropagation();
@@ -387,10 +408,10 @@
     },
 
     /**
-     * only the card user ask with server answer be saved to localStorage, this rule is implemnted in function: createConversation, saveChatHistory.
+     * only the card user ask with server answer be saved to localStorage, this rule is implemnted in function: userAsk, saveChatHistory.
      * saveChatHistory is called in two place:
      * 1. pagehide callback
-     * 2. createConversation, as event pagehide is not support so well in ios
+     * 2. userAsk, as event pagehide is not support so well in ios
      */
     saveChatHistory: function() {
       if (Array.isArray(this.chatHistory)) {
@@ -411,10 +432,10 @@
 
     /**
      * siriSay: 
-     * 1. the same as user createConversation except not showing ask dom
+     * 1. the same as user userAsk except not showing ask dom
      */
     siriSay: function(question, actions) {
-      this.createConversation({
+      this.userAsk({
         'type': this.cardStyle.SIRI_SAY,
         'question': question
       }, actions);
@@ -447,6 +468,12 @@
      * logic: createCard -> createAskDOM -> createAnswerDOM
      * @askOptions can be string or object
      * string: question to ask
+     * 
+     * 'question': {
+     *    'toShow': ''
+     *    'toAsk': ''
+     * }
+     * 
      * object: {
      *   'type': this.cardStyle.SIRI_SAY,
      *   'question': {
@@ -454,8 +481,10 @@
      *      'toAsk': ''
      *   }
      * }
+     *
+     * must have toShow and toAsk if question is obj.
      */
-    createConversation: function(askOptions, askActions) {
+    userAsk: function(askOptions, askActions) {
       var cardType = this.cardStyle.USER_ASK;
       var questionToShow = '';
       var questionToServer = '';
@@ -464,15 +493,19 @@
         questionToShow = questionToServer = askOptions.trim();
       } else if (typeof(askOptions) === 'object') {
         cardType = 'type' in askOptions ? askOptions['type'] : cardType;
-        if ('question' in askOptions) {
+        if ('toAsk' in askOptions && 'toAsk' in askOptions) {
+          questionToShow = askOptions['toShow'].trim();
+          questionToServer = askOptions['toAsk'].trim();
+        } else if ('question' in askOptions) {
           if (typeof(askOptions['question']) === 'string') {
             questionToShow = questionToServer = askOptions['question'].trim();
           } else if (typeof(askOptions['question']) === 'object') {
             questionToShow = askOptions['question']['toShow'].trim();
-            questionToServer = askOptions['question']['toServer'].trim();
+            questionToServer = askOptions['question']['toAsk'].trim();
           }
         }
       }
+
       if (!askActions) {
         askActions = {};
       }
