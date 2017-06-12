@@ -179,9 +179,13 @@
   BenewSage.prototype = {
     init: function() {
       var theme = this.env.theme;
-      if (theme) {
-        $('#main').addClass(theme);
-        $('#siri_ask_hint').addClass(theme);
+      // if (theme) {
+      //   $('#main').addClass(theme);
+      //   $('#siri_ask_hint').addClass(theme);
+      // }
+      if (!theme || 'app' !== theme) {
+        $('#main').removeClass(theme);
+        $('#siri_ask_hint').removeClass(theme);
       }
       this.siriAskHint = new SIRIAskHint(this);
       if (this.tagSaveChatHistory) {
