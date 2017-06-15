@@ -277,7 +277,7 @@
     },
 
     output: function(msg) {
-      if (true) {
+      if (false) {
         console.log(JSON.stringify(msg));
       }
     },
