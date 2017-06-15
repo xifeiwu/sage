@@ -183,9 +183,16 @@
       //   $('#main').addClass(theme);
       //   $('#siri_ask_hint').addClass(theme);
       // }
-      if (!theme || 'app' !== theme) {
-        $('#main').removeClass(theme);
-        $('#siri_ask_hint').removeClass(theme);
+      if (!theme) {
+        $('#main').removeClass('app');
+        $('#siri_ask_hint').removeClass('app');
+      } else {
+        if ('app' !== theme) {
+          $('#main').removeClass('app');
+          $('#siri_ask_hint').removeClass('app');
+          $('#main').addClass(theme);
+          $('#siri_ask_hint').addClass(theme);
+        }
       }
       this.siriAskHint = new SIRIAskHint(this);
       if (this.tagSaveChatHistory) {
