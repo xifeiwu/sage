@@ -162,6 +162,7 @@
     this.env = {
       'inAPP': this.environments.isInApp(),
       'platform': this.environments.getPlatform(),
+      'actionFrom': this.environments.getActionFrom(),
       'from': this.environments.getFrom(),
       'action': this.environments.getAction(),
       'theme': this.environments.getTheme(),
@@ -203,7 +204,7 @@
         case 'feedback':
           this.userAsk({
             'toShow': '我要反馈',
-            'toAsk': '我要反馈 ' + this.env.from
+            'toAsk': '我要反馈 ' + this.env.actionFrom
           }, {
               'SEND_BENEW_ID': {
                 'benewID': this.benewID
@@ -213,7 +214,7 @@
           break;
         case 'help':
           var question = null;
-          switch(this.env.from) {
+          switch(this.env.actionFrom) {
             case 'forecast':
               question = '了解会牛趋势预测图';
               break;

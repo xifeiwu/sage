@@ -185,6 +185,9 @@
           }
           return theme;
         },
+        getActionFrom: function() {
+          return $.getQueryString('from');
+        },
         /**
          * where the conversition come from:
          * app, wechat, forecast
