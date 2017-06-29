@@ -215,15 +215,15 @@
           var question = null;
           switch(this.env.from) {
             case 'forecast':
-              question = '了解会牛趋势预测图'
+              question = '了解会牛趋势预测图';
               break;
             case 'hot':
-              question = '了解会牛热议图'
+              question = '了解会牛热议图';
               break;
           }
-          if (null != question) {
+          if (null !== question) {
             this.userAsk({
-              'toShow': question
+              'toShow': question,
               'toAsk': question
             }, {
                 'SEND_BENEW_ID': {
@@ -447,7 +447,7 @@
      * 2. userAsk, as event pagehide is not support so well in ios
      */
     saveChatHistory: function() {
-      if (Array.isArray(this.chatHistory)) {
+      if (Array.isArray(this.chatHistory) && this.chatHistory.length > 0) {
         var maxDuration = 2 * 24 * 3600 * 1000;
         var lastTime = this.chatHistory[this.chatHistory.length - 1].id;
         var chatHistory = this.chatHistory.filter(function(it) {

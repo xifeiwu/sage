@@ -7,6 +7,9 @@ This is the front-end part of project sage.
     gulp watch
     node server/index.js
 
+## found error
+    
+    gulp lint
 
 ## 发布
 发布地址(uat及product)：<http://10.10.221.28/>
