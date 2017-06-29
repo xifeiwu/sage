@@ -211,6 +211,28 @@
             }
           );
           break;
+        case 'help':
+          var question = null;
+          switch(this.env.from) {
+            case 'forecast':
+              question = '了解会牛趋势预测图'
+              break;
+            case 'hot':
+              question = '了解会牛热议图'
+              break;
+          }
+          if (null != question) {
+            this.userAsk({
+              'toShow': question
+              'toAsk': question
+            }, {
+                'SEND_BENEW_ID': {
+                  'benewID': this.benewID
+                }
+              }
+            );
+          }
+          break;
         default:
           this.siriSay('hi', {
               'SEND_BENEW_ID': {
