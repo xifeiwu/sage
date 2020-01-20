@@ -2,6 +2,9 @@
   "name": "benew-mobile-optimize",
   "version": "1.0.0",
   "description": "benew mobile project",
+  "scripts": {
+    "build": "gulp build"
+  },
   "devDependencies": {
     "glob": "^6.0.4",
     "gulp": "^3.9.0",
