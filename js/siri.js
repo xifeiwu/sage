@@ -244,9 +244,6 @@
           break;
       }
       this.startHeartBeat();
-      window.zhuge.track('sage_chat_open', {
-        'token': window.localStorage.token
-      });
     },
 
     addEvent: function() {
@@ -255,6 +252,9 @@
         this.userAsk(inputBar.val());
         inputBar.val('');
         inputBar.blur();
+      }.bind(this));
+      $('#input_bar .btn_help').on('click', function() {
+        this.siriAskHint.show(true);
       }.bind(this));
       $('#input_bar input').on('keydown', function(t) {
         var s = t || window.event;

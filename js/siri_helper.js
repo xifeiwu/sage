@@ -28,18 +28,19 @@ NetConnector.prototype = {
   },
 
   getAjaxHost: function(profile) {
-    var host = null;
-    switch (profile) {
-      case 'uat_ip':
-        host = 'http://10.19.93.129:8090/';
-        break;
-      case 'uat':
-        host =  'http://mtest.iqianjin.com/';
-        break;
-      case 'product':
-        host = 'https://m.benew.com.cn/';
-        break;
-    }
+    // var host = 'http://127.0.0.1:6003';
+    return location.origin;
+    // switch (profile) {
+    //   case 'uat_ip':
+    //     host = 'http://10.19.93.129:8090/';
+    //     break;
+    //   case 'uat':
+    //     host =  'http://mtest.iqianjin.com/';
+    //     break;
+    //   case 'product':
+    //     host = 'https://m.benew.com.cn/';
+    //     break;
+    // }
     return host;
   },
 
@@ -78,7 +79,8 @@ NetConnector.prototype = {
       //   });
       //   break;
       case this.askType.ASK:
-        path = 'bot/api/v1/botServer/sessionOperator/receiveh5';
+        // path = 'bot/api/v1/botServer/sessionOperator/receiveh5';
+        path = '/api/sage/ask'
         break;
       case this.askType.REFRESH:
         path = 'bot/api/v1/botServer/sessionOperator/flashh5';
