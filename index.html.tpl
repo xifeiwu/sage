@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=0">
   <meta name="format-detection" content="telephone=no">
   <title>哲</title>
-  <link rel="stylesheet" href="css/siri.css">
+  <link rel="stylesheet" href="/sage/css/siri.css">
 </head>
 
 <body>
@@ -21,10 +21,7 @@
     </div>
   </div>
   <div id="siri_ask_hint" class="app"></div>
-  <script type="text/javascript" src="js/lib/zepto.min.js"></script>
-  <script src="js/benew_common.js"></script>
-  <script src="js/siri_helper.js"></script>
-  <script src="js/siri.js"></script>
+  <script src="/sage/js/index.min.js"></script>
 </body>
 
 </html>

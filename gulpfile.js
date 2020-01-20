@@ -23,8 +23,9 @@ gulp.task('clean', function() {
 
 gulp.task('html', function() {
   var opts = {comments:true, spare:true};
-  gulp.src('*.html')
+  gulp.src('index.html.tpl')
     .pipe(minifyHTML(opts))
+    .pipe(rename('index.html'))
     .pipe(gulp.dest(DEST_DIR));
 });
 
